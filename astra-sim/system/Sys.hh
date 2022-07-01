@@ -25,6 +25,7 @@ LICENSE file in the root directory of this source tree.
 #include "Common.hh"
 #include "UsageTracker.hh"
 #include "astra-sim/system/topology/RingTopology.hh"
+#include "astra-sim/system/Roofline.hh"
 #include "astra-sim/workload/Workload.hh"
 
 namespace AstraSim {
@@ -158,6 +159,10 @@ class Sys : public Callable {
   int round_robin_inter_dimension_scheduler;
   OfflineGreedy* offline_greedy;
   Tick last_scheduled_collective;
+
+  bool roofline_enabled;
+  Roofline* local_mem_roofline;
+  Roofline* remote_mem_roofline;
 
   void register_for_finished_stream(Callable* callable);
   void increase_finished_streams(int amount);
@@ -324,6 +329,9 @@ class Sys : public Callable {
   int get_priority(SchedulingPolicy pref_scheduling);
   static void handleEvent(void* arg);
   timespec_t generate_time(Tick cycles);
+
+  void alloc_roofline_if_not_allocated();
+  void dealloc_roofline();
 };
 } // namespace AstraSim
 #endif

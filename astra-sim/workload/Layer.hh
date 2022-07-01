@@ -32,18 +32,21 @@ class Layer : public Callable, public StreamStat {
   Workload* workload;
 
   Tick fwd_pass_compute_time;
+  Tick fwd_pass_compute_time_roofline;
   ComType fwd_pass_comm_type;
   uint64_t fwd_pass_comm_size;
   Tick fwd_update_time;
   std::vector<bool> fwd_pass_comm_involved_dimensions;
 
   Tick input_grad_compute_time;
+  Tick input_grad_compute_time_roofline;
   ComType input_grad_comm_type;
   uint64_t input_grad_comm_size;
   Tick input_grad_update_time;
   std::vector<bool> input_grad_comm_involved_dimensions;
 
   Tick weight_grad_compute_time;
+  Tick weight_grad_compute_time_roofline;
   ComType weight_grad_comm_type;
   uint64_t weight_grad_comm_size;
   Tick weight_grad_update_time;
@@ -93,14 +96,17 @@ class Layer : public Callable, public StreamStat {
       Sys* generator,
       Workload* workload,
       Tick fwd_pass_compute_time,
+      Tick fwd_pass_compute_time_roofline,
       ComType fwd_pass_comm_type,
       uint64_t fwd_pass_comm_size,
       std::vector<bool> fwd_pass_comm_involved_dimensions,
       Tick input_grad_compute_time,
+      Tick input_grad_compute_time_roofline,
       ComType input_grad_comm_type,
       uint64_t input_grad_comm_size,
       std::vector<bool> input_grad_comm_involved_dimensions,
       Tick weight_grad_compute_time,
+      Tick weight_grad_compute_time_roofline,
       ComType weight_grad_comm_type,
       uint64_t weight_grad_comm_size,
       std::vector<bool> weight_grad_comm_involved_dimensions,

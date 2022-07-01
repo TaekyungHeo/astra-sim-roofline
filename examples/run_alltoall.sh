@@ -21,17 +21,8 @@ done
 
 echo "network: $network";
 
-if [ "$network" == "garnet" ]
-then
-	BINARY="${SCRIPT_DIR:?}"/../build/astra_garnet/build/gem5.opt
-	NETWORK="${SCRIPT_DIR:?}"/../inputs/network/garnet/sample_torus
-    SYNTHETIC="--synthetic=training"
-    CONFIG="${SCRIPT_DIR:?}"/../extern/network_backend/garnet/gem5_astra/configs/example/garnet_synth_traffic.py    
-elif [ "$network" == "analytical" ]
-then
-    BINARY="${SCRIPT_DIR:?}"/../build/astra_analytical/build/AnalyticalAstra/bin/AnalyticalAstra
-	NETWORK="${SCRIPT_DIR:?}"/../inputs/network/analytical/sample_Torus3D.json
-fi
+BINARY="${SCRIPT_DIR:?}"/../build/astra_analytical/build/AnalyticalAstra/bin/AnalyticalAstra
+NETWORK="${SCRIPT_DIR:?}"/../inputs/network/analytical/sample_Torus3D.json
 
 rm -rf "${STATS}"
 mkdir "${STATS}"

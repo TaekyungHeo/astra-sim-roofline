@@ -1324,6 +1324,27 @@ bool Workload::initialize_workload(std::string name) {
 
     Tick fp_compute_time;
     inFile >> fp_compute_time;
+
+    int loc;
+    uint64_t M, K, N, num_ops, mat_size;
+    double oi;
+
+    Tick fp_compute_time_roofline;
+    inFile >> loc;
+    inFile >> M;
+    inFile >> K;
+    inFile >> N;
+    num_ops = 2*M*K*N;
+    mat_size = (2*M*K + 2*K*N + 2*M*N); // assuming 2B input size, TODO - parameterize
+    oi = static_cast<double>(num_ops) / static_cast<double>(mat_size);
+    if (loc == 0) { // local
+      fp_compute_time_roofline = generator->local_mem_roofline->get_perf(oi);
+    } else { // remote
+      fp_compute_time_roofline = generator->remote_mem_roofline->get_perf(oi);
+      // TODO: do you want to share memory bandwidth between multiple NPUs?
+      // Alternatively, do you want to have a single roofline and remote memory access is modeled as latency?
+    }
+
     std::string fp_comm_type_s;
     inFile >> fp_comm_type_s;
     uint64_t fp_comm_size;
@@ -1331,6 +1352,21 @@ bool Workload::initialize_workload(std::string name) {
 
     Tick ig_compute_time;
     inFile >> ig_compute_time;
+
+    Tick ig_compute_time_roofline;
+    inFile >> loc;
+    inFile >> M;
+    inFile >> K;
+    inFile >> N;
+    num_ops = 2*M*K*N;
+    mat_size = (2*M*K + 2*K*N + 2*M*N); // assuming 2B input size, TODO - parameterize
+    oi = static_cast<double>(num_ops) / static_cast<double>(mat_size);
+    if (loc == 0) { // local
+      ig_compute_time_roofline = generator->local_mem_roofline->get_perf(oi);
+    } else { // remote
+      ig_compute_time_roofline = generator->remote_mem_roofline->get_perf(oi);
+    }
+
     std::string ig_comm_type_s;
     inFile >> ig_comm_type_s;
     uint64_t ig_comm_size;
@@ -1338,6 +1374,21 @@ bool Workload::initialize_workload(std::string name) {
 
     Tick wg_compute_time;
     inFile >> wg_compute_time;
+
+    Tick wg_compute_time_roofline;
+    inFile >> loc;
+    inFile >> M;
+    inFile >> K;
+    inFile >> N;
+    num_ops = 2*M*K*N;
+    mat_size = (2*M*K + 2*K*N + 2*M*N); // assuming 2B input size, TODO - parameterize
+    oi = static_cast<double>(num_ops) / static_cast<double>(mat_size);
+    if (loc == 0) { // local
+      wg_compute_time_roofline = generator->local_mem_roofline->get_perf(oi);
+    } else { // remote
+      wg_compute_time_roofline = generator->remote_mem_roofline->get_perf(oi);
+    }
+
     std::string wg_comm_type_s;
     inFile >> wg_comm_type_s;
     uint64_t wg_comm_size;
@@ -1414,14 +1465,17 @@ bool Workload::initialize_workload(std::string name) {
         generator,
         this,
         fp_compute_time * generator->compute_scale,
+        fp_compute_time_roofline * generator->compute_scale,
         fp_type,
         fp_comm_size * generator->comm_scale,
         selected_involved_dimensions["fwd"],
         ig_compute_time * generator->compute_scale,
+        ig_compute_time_roofline * generator->compute_scale,
         ig_type,
         ig_comm_size * generator->comm_scale,
         selected_involved_dimensions["ig"],
         wg_compute_time * generator->compute_scale,
+        wg_compute_time_roofline * generator->compute_scale,
         wg_type,
         wg_comm_size * generator->comm_scale,
         selected_involved_dimensions["wg"],

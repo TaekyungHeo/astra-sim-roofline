@@ -91,6 +91,9 @@ Sys::~Sys() {
     delete workload;
   if (offline_greedy != nullptr)
     delete offline_greedy;
+  if (roofline_enabled) {
+    dealloc_roofline();
+  }
   bool shouldExit = true;
   for (auto& a : all_generators) {
     if (a != nullptr) {
@@ -283,6 +286,11 @@ Sys::Sys(
           InterDimensionScheduling::OfflineGreedyFlex) {
     offline_greedy = new OfflineGreedy(this);
   }
+
+  this->roofline_enabled = false;
+  this->local_mem_roofline = nullptr;
+  this->remote_mem_roofline = nullptr;
+
   this->initialized = true;
 }
 int Sys::break_dimension(int model_parallel_npu_group) {
@@ -760,6 +768,42 @@ bool Sys::parse_var(std::string var, std::string value) {
     } else {
       this->seprate_log = true;
     }
+  } else if (var == "local-mem-roofline-bw:") {
+    alloc_roofline_if_not_allocated();
+    std::stringstream mval(value);
+    double bw;
+    mval >> bw;
+    local_mem_roofline->set_bandwidth(bw);
+  } else if (var == "local-mem-roofline-neg-y-intercept:") {
+    alloc_roofline_if_not_allocated();
+    std::stringstream mval(value);
+    uint64_t neg_y_intercept;
+    mval >> neg_y_intercept;
+    local_mem_roofline->set_neg_y_intercept(neg_y_intercept);
+  } else if (var == "local-mem-roofline-peak-perf:") {
+    alloc_roofline_if_not_allocated();
+    std::stringstream mval(value);
+    uint64_t peak_perf;
+    mval >> peak_perf;
+    local_mem_roofline->set_peak_perf(peak_perf);
+  } else if (var == "remote-mem-roofline-bw:") {
+    alloc_roofline_if_not_allocated();
+    std::stringstream mval(value);
+    double bw;
+    mval >> bw;
+    remote_mem_roofline->set_bandwidth(bw); // TODO: divide by # NPUs (shared)
+  } else if (var == "remote-mem-roofline-neg-y-intercept:") {
+    alloc_roofline_if_not_allocated();
+    std::stringstream mval(value);
+    uint64_t neg_y_intercept;
+    mval >> neg_y_intercept;
+    remote_mem_roofline->set_neg_y_intercept(neg_y_intercept);
+  } else if (var == "remote-mem-roofline-peak-perf:") {
+    alloc_roofline_if_not_allocated();
+    std::stringstream mval(value);
+    uint64_t peak_perf;
+    mval >> peak_perf;
+    remote_mem_roofline->set_peak_perf(peak_perf);
   } else if (var != "") {
     std::cerr
         << "######### Exiting because " << var
@@ -1761,5 +1805,21 @@ timespec_t Sys::generate_time(Tick cycles) {
   double addition = cycles * ((double)CLOCK_PERIOD);
   tmp.time_val = addition;
   return tmp;
+}
+void Sys::alloc_roofline_if_not_allocated() {
+  roofline_enabled = true;
+  if (local_mem_roofline == nullptr) {
+    local_mem_roofline = new Roofline;
+  }
+  if (remote_mem_roofline == nullptr) {
+    remote_mem_roofline = new Roofline;
+  }
+}
+void Sys::dealloc_roofline() {
+  if (roofline_enabled) {
+    delete local_mem_roofline;
+    delete remote_mem_roofline;
+    roofline_enabled = false;
+  }
 }
 } // namespace AstraSim
