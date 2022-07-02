@@ -162,6 +162,9 @@ Sys::Sys(
   this->seprate_log = seprate_log;
   this->rendezvous_enabled = rendezvous_enabled;
   this->data_type_size = 2;
+  this->roofline_enabled = false;
+  this->local_mem_roofline = nullptr;
+  this->remote_mem_roofline = nullptr;
   if ((id + 1) > all_generators.size()) {
     all_generators.resize(id + 1);
   }
@@ -287,10 +290,6 @@ Sys::Sys(
           InterDimensionScheduling::OfflineGreedyFlex) {
     offline_greedy = new OfflineGreedy(this);
   }
-
-  this->roofline_enabled = false;
-  this->local_mem_roofline = nullptr;
-  this->remote_mem_roofline = nullptr;
 
   this->initialized = true;
 }

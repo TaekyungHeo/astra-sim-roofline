@@ -1340,18 +1340,20 @@ bool Workload::initialize_workload(std::string name) {
         + generator->data_type_size*K*N
         + generator->data_type_size*M*N);
     oi = static_cast<double>(num_ops) / static_cast<double>(mat_size);
-    if (loc == 0) { // local
-      fp_compute_time_roofline =
-        static_cast<Tick>(
-            (static_cast<float>(num_ops)
-             / static_cast<float>(generator->local_mem_roofline->get_perf(oi)))
-            * static_cast<float>(FREQ));
-    } else { // remote
-      fp_compute_time_roofline =
-        static_cast<Tick>(
-            (static_cast<float>(num_ops)
-             / static_cast<float>(generator->remote_mem_roofline->get_perf(oi)))
-            * static_cast<float>(FREQ));
+    if (generator->roofline_enabled) {
+      if (loc == 0) { // local
+          fp_compute_time_roofline =
+            static_cast<Tick>(
+                (static_cast<float>(num_ops)
+                 / static_cast<float>(generator->local_mem_roofline->get_perf(oi)))
+                * static_cast<float>(FREQ));
+      } else { // remote
+        fp_compute_time_roofline =
+          static_cast<Tick>(
+              (static_cast<float>(num_ops)
+               / static_cast<float>(generator->remote_mem_roofline->get_perf(oi)))
+              * static_cast<float>(FREQ));
+      }
     }
 
     std::string fp_comm_type_s;
@@ -1373,18 +1375,20 @@ bool Workload::initialize_workload(std::string name) {
         + generator->data_type_size*K*N
         + generator->data_type_size*M*N);
     oi = static_cast<double>(num_ops) / static_cast<double>(mat_size);
-    if (loc == 0) { // local
-      ig_compute_time_roofline =
-        static_cast<Tick>(
-            (static_cast<float>(num_ops)
-             / static_cast<float>(generator->local_mem_roofline->get_perf(oi)))
-            * static_cast<float>(FREQ));
-    } else { // remote
-      ig_compute_time_roofline =
-        static_cast<Tick>(
-            (static_cast<float>(num_ops)
-             / static_cast<float>(generator->remote_mem_roofline->get_perf(oi)))
-            * static_cast<float>(FREQ));
+    if (generator->roofline_enabled) {
+      if (loc == 0) { // local
+        ig_compute_time_roofline =
+          static_cast<Tick>(
+              (static_cast<float>(num_ops)
+               / static_cast<float>(generator->local_mem_roofline->get_perf(oi)))
+              * static_cast<float>(FREQ));
+      } else { // remote
+        ig_compute_time_roofline =
+          static_cast<Tick>(
+              (static_cast<float>(num_ops)
+               / static_cast<float>(generator->remote_mem_roofline->get_perf(oi)))
+              * static_cast<float>(FREQ));
+      }
     }
 
     std::string ig_comm_type_s;
@@ -1406,18 +1410,20 @@ bool Workload::initialize_workload(std::string name) {
         + generator->data_type_size*K*N
         + generator->data_type_size*M*N);
     oi = static_cast<double>(num_ops) / static_cast<double>(mat_size);
-    if (loc == 0) { // local
-      wg_compute_time_roofline =
-        static_cast<Tick>(
-            (static_cast<float>(num_ops)
-             / static_cast<float>(generator->local_mem_roofline->get_perf(oi)))
-            * static_cast<float>(FREQ));
-    } else { // remote
-      wg_compute_time_roofline =
-        static_cast<Tick>(
-            (static_cast<float>(num_ops)
-             / static_cast<float>(generator->remote_mem_roofline->get_perf(oi)))
-            * static_cast<float>(FREQ));
+    if (generator->roofline_enabled) {
+      if (loc == 0) { // local
+          wg_compute_time_roofline =
+            static_cast<Tick>(
+                (static_cast<float>(num_ops)
+                 / static_cast<float>(generator->local_mem_roofline->get_perf(oi)))
+                * static_cast<float>(FREQ));
+      } else { // remote
+        wg_compute_time_roofline =
+          static_cast<Tick>(
+              (static_cast<float>(num_ops)
+               / static_cast<float>(generator->remote_mem_roofline->get_perf(oi)))
+              * static_cast<float>(FREQ));
+      }
     }
 
     std::string wg_comm_type_s;
