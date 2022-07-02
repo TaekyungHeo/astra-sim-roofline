@@ -1335,14 +1335,23 @@ bool Workload::initialize_workload(std::string name) {
     inFile >> K;
     inFile >> N;
     num_ops = 2*M*K*N;
-    mat_size = (2*M*K + 2*K*N + 2*M*N); // assuming 2B input size, TODO - parameterize
+    mat_size =
+      (generator->data_type_size*M*K
+        + generator->data_type_size*K*N
+        + generator->data_type_size*M*N);
     oi = static_cast<double>(num_ops) / static_cast<double>(mat_size);
     if (loc == 0) { // local
-      fp_compute_time_roofline = generator->local_mem_roofline->get_perf(oi);
+      fp_compute_time_roofline =
+        static_cast<Tick>(
+            (static_cast<float>(num_ops)
+             / static_cast<float>(generator->local_mem_roofline->get_perf(oi)))
+            * static_cast<float>(FREQ));
     } else { // remote
-      fp_compute_time_roofline = generator->remote_mem_roofline->get_perf(oi);
-      // TODO: do you want to share memory bandwidth between multiple NPUs?
-      // Alternatively, do you want to have a single roofline and remote memory access is modeled as latency?
+      fp_compute_time_roofline =
+        static_cast<Tick>(
+            (static_cast<float>(num_ops)
+             / static_cast<float>(generator->remote_mem_roofline->get_perf(oi)))
+            * static_cast<float>(FREQ));
     }
 
     std::string fp_comm_type_s;
@@ -1359,12 +1368,23 @@ bool Workload::initialize_workload(std::string name) {
     inFile >> K;
     inFile >> N;
     num_ops = 2*M*K*N;
-    mat_size = (2*M*K + 2*K*N + 2*M*N); // assuming 2B input size, TODO - parameterize
+    mat_size =
+      (generator->data_type_size*M*K
+        + generator->data_type_size*K*N
+        + generator->data_type_size*M*N);
     oi = static_cast<double>(num_ops) / static_cast<double>(mat_size);
     if (loc == 0) { // local
-      ig_compute_time_roofline = generator->local_mem_roofline->get_perf(oi);
+      ig_compute_time_roofline =
+        static_cast<Tick>(
+            (static_cast<float>(num_ops)
+             / static_cast<float>(generator->local_mem_roofline->get_perf(oi)))
+            * static_cast<float>(FREQ));
     } else { // remote
-      ig_compute_time_roofline = generator->remote_mem_roofline->get_perf(oi);
+      ig_compute_time_roofline =
+        static_cast<Tick>(
+            (static_cast<float>(num_ops)
+             / static_cast<float>(generator->remote_mem_roofline->get_perf(oi)))
+            * static_cast<float>(FREQ));
     }
 
     std::string ig_comm_type_s;
@@ -1381,12 +1401,23 @@ bool Workload::initialize_workload(std::string name) {
     inFile >> K;
     inFile >> N;
     num_ops = 2*M*K*N;
-    mat_size = (2*M*K + 2*K*N + 2*M*N); // assuming 2B input size, TODO - parameterize
+    mat_size =
+      (generator->data_type_size*M*K
+        + generator->data_type_size*K*N
+        + generator->data_type_size*M*N);
     oi = static_cast<double>(num_ops) / static_cast<double>(mat_size);
     if (loc == 0) { // local
-      wg_compute_time_roofline = generator->local_mem_roofline->get_perf(oi);
+      wg_compute_time_roofline =
+        static_cast<Tick>(
+            (static_cast<float>(num_ops)
+             / static_cast<float>(generator->local_mem_roofline->get_perf(oi)))
+            * static_cast<float>(FREQ));
     } else { // remote
-      wg_compute_time_roofline = generator->remote_mem_roofline->get_perf(oi);
+      wg_compute_time_roofline =
+        static_cast<Tick>(
+            (static_cast<float>(num_ops)
+             / static_cast<float>(generator->remote_mem_roofline->get_perf(oi)))
+            * static_cast<float>(FREQ));
     }
 
     std::string wg_comm_type_s;
