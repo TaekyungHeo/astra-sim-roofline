@@ -1,4 +1,4 @@
-#! /bin/bash -v
+#! /bin/bash
 
 # Absolue path to this script
 SCRIPT_DIR=$(dirname "$(realpath $0)")
@@ -27,13 +27,4 @@ NETWORK="${SCRIPT_DIR:?}"/../inputs/network/analytical/sample_Torus3D.json
 rm -rf "${STATS}"
 mkdir "${STATS}"
 
-"${BINARY}" "${CONFIG}" "$SYNTHETIC" \
---network-configuration="${NETWORK}" \
---system-configuration="${SYSTEM}" \
---workload-configuration="${WORKLOAD}" \
---path="${STATS}/" \
---run-name="sample_all_to_all" \
---num-passes=2 \
---total-stat-rows=1 \
---stat-row=0 
-
+$BINARY ${CONFIG} $SYNTHETIC --network-configuration=${NETWORK} --system-configuration=${SYSTEM} --workload-configuration=${WORKLOAD} --path=${STATS}/ --run-name=sample_all_to_all --num-passes=2 --total-stat-rows=1 --stat-row=0
