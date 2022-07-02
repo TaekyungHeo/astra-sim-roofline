@@ -14,3 +14,4 @@ local-mem-roofline-peak-perf: 10000
 remote-mem-roofline-bw: 100
 remote-mem-roofline-neg-y-intercept: 0
 remote-mem-roofline-peak-perf: 10000
+data-type-size: 2

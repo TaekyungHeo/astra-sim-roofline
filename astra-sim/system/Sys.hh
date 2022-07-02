@@ -163,6 +163,7 @@ class Sys : public Callable {
   bool roofline_enabled;
   Roofline* local_mem_roofline;
   Roofline* remote_mem_roofline;
+  uint64_t data_type_size;
 
   void register_for_finished_stream(Callable* callable);
   void increase_finished_streams(int amount);

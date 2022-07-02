@@ -290,6 +290,7 @@ Sys::Sys(
   this->roofline_enabled = false;
   this->local_mem_roofline = nullptr;
   this->remote_mem_roofline = nullptr;
+  this->data_type_size = 2;
 
   this->initialized = true;
 }
@@ -804,6 +805,9 @@ bool Sys::parse_var(std::string var, std::string value) {
     uint64_t peak_perf;
     mval >> peak_perf;
     remote_mem_roofline->set_peak_perf(peak_perf);
+  } else if (var == "data-type-size:") {
+    std::stringstream mval(value);
+    mval >> data_type_size;
   } else if (var != "") {
     std::cerr
         << "######### Exiting because " << var
