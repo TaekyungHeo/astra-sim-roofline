@@ -773,36 +773,60 @@ bool Sys::parse_var(std::string var, std::string value) {
     std::stringstream mval(value);
     double bw;
     mval >> bw;
+
+    // [DIVYA Jul 02, 2022] Default units are GB/sec. Hence convert it here to Bytes / sec
+    // by multiplying with a factor of 1e9
+    bw *= 1e9;
+
     local_mem_roofline->set_bandwidth(bw);
   } else if (var == "local-mem-roofline-neg-y-intercept:") {
     alloc_roofline_if_not_allocated();
     std::stringstream mval(value);
-    uint64_t neg_y_intercept;
+    double neg_y_intercept;
     mval >> neg_y_intercept;
+
+    // [DIVYA Jul 02, 2022] Default units are TFLOPS/sec. Hence convert it here to FLOPS / sec
+    // by multiplying with a factor of 1e12
+    neg_y_intercept *= 1e12;
     local_mem_roofline->set_neg_y_intercept(neg_y_intercept);
+
   } else if (var == "local-mem-roofline-peak-perf:") {
     alloc_roofline_if_not_allocated();
     std::stringstream mval(value);
-    uint64_t peak_perf;
+    double peak_perf;
     mval >> peak_perf;
+
+    // [DIVYA Jul 02, 2022] Default units are TFLOPS/sec. Hence convert it here to FLOPS / sec
+    // by multiplying with a factor of 1e12.
+    peak_perf *= 1e12;
     local_mem_roofline->set_peak_perf(peak_perf);
+
   } else if (var == "remote-mem-roofline-bw:") {
     alloc_roofline_if_not_allocated();
     std::stringstream mval(value);
     double bw;
     mval >> bw;
+    // [DIVYA Jul 02, 2022] Default units are GB/sec. Hence convert it here to Bytes / sec
+    // by multiplying with a factor of 1e9
+    bw *= 1e9;
     remote_mem_roofline->set_bandwidth(bw); // TODO: divide by # NPUs (shared)
   } else if (var == "remote-mem-roofline-neg-y-intercept:") {
     alloc_roofline_if_not_allocated();
     std::stringstream mval(value);
-    uint64_t neg_y_intercept;
+    double neg_y_intercept;
     mval >> neg_y_intercept;
+    // [DIVYA Jul 02, 2022] Default units are TFLOPS/sec. Hence convert it here to FLOPS / sec
+    // by multiplying with a factor of 1e12
+    neg_y_intercept *= 1e12;
     remote_mem_roofline->set_neg_y_intercept(neg_y_intercept);
   } else if (var == "remote-mem-roofline-peak-perf:") {
     alloc_roofline_if_not_allocated();
     std::stringstream mval(value);
-    uint64_t peak_perf;
+    double peak_perf;
     mval >> peak_perf;
+    // [DIVYA Jul 02, 2022] Default units are TFLOPS/sec. Hence convert it here to FLOPS / sec
+    // by multiplying with a factor of 1e12.
+    peak_perf *= 1e12;
     remote_mem_roofline->set_peak_perf(peak_perf);
   } else if (var == "data-type-size:") {
     std::stringstream mval(value);

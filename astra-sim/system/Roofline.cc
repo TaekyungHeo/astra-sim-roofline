@@ -20,11 +20,11 @@ void Roofline::set_bandwidth(double bandwidth) {
   this->bandwidth = bandwidth;
 }
 
-void Roofline::set_neg_y_intercept(uint64_t neg_y_intercept) {
+void Roofline::set_neg_y_intercept(double neg_y_intercept) {
   this->neg_y_intercept = neg_y_intercept;
 }
 
-void Roofline::set_peak_perf(uint64_t peak_perf) {
+void Roofline::set_peak_perf(double peak_perf) {
   this->peak_perf = peak_perf;
 }
 

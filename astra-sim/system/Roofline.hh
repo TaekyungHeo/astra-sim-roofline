@@ -15,8 +15,8 @@ class Roofline
 public:
   Roofline();
   void set_bandwidth(double bandwidth);
-  void set_neg_y_intercept(uint64_t neg_y_intercept);
-  void set_peak_perf(uint64_t peak_perf);
+  void set_neg_y_intercept(double neg_y_intercept);
+  void set_peak_perf(double peak_perf);
   uint64_t get_perf(double operational_intensity);
 
 private:
