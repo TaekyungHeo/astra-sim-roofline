@@ -50,8 +50,11 @@ Layer::Layer(
   this->collective_counter = 0;
 
   this->weight_grad_update_time = weight_grad_update_time;
+  this->weight_grad_compute_time_roofline = weight_grad_compute_time_roofline;
   this->fwd_update_time = weight_grad_update_time;
+  this->fwd_pass_compute_time_roofline = fwd_pass_compute_time_roofline;
   this->input_grad_update_time = weight_grad_update_time;
+  this->input_grad_compute_time_roofline = input_grad_compute_time_roofline;
 
   // this->fwd_pass_dataset=NULL;
   //->input_grad_dataset=NULL;
