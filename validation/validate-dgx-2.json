@@ -1,0 +1,15 @@
+{
+  "topology-name": "Hierarchical",
+  "topologies-per-dim": ["Switch", "Switch"],
+  "dimension-type": ["Package", "Pod"],
+  "dimensions-count": 2,
+  "units-count": [16, 16],
+  "links-count": [6, 1],
+  "link-latency": [1, 1],
+  "link-bandwidth": [25, 12.5],
+  "nic-latency": [0, 0],
+  "router-latency": [0, 0],
+  "hbm-latency": [1, 1],
+  "hbm-bandwidth": [1, 1],
+  "hbm-scale": [0, 0]
+}

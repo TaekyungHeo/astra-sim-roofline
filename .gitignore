@@ -16,3 +16,7 @@ examples/results/
 
 # JetBrains
 .idea/
+
+*txt.swp
+*.swp
+*.swo

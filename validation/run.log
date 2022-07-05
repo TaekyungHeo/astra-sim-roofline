@@ -1,0 +1,3424 @@
+#! /bin/bash -v
+
+# Absolue path to this script
+
+ASTRASIM="/home/dkadiyala3/Desktop/astra-sim-roofline"
+#ASTRASIM="/nethome/dkadiyala3/astra-sim-roofline"
+
+# Absolute paths to useful directories
+BINARY="${ASTRASIM}/build/astra_analytical/build/AnalyticalAstra/bin/AnalyticalAstra"
+## NETWORK="./sample_Torus3D.json"
+## SYSTEM="./sample_torus_sys.txt"
+##WORKLOAD="./Transformer_HybridParallel_Fwd_In_Bckwd.txt"
+
+NETWORK="./dgx-2.json"
+SYSTEM="./dgx-2.txt"
+WORKLOAD="./new_Transformer_HybridParallel_Fwd_In_Bckwd.txt"
+
+#NETWORK="./sample_Ring_FullyConnected_Ring.json"
+#SYSTEM="./sample_ring_sys.txt"
+
+##WORKLOAD="./microAllToAll.txt"
+##WORKLOAD="./microbenchmark-1.txt"
+STATS="./astra_allreduce_analytical"
+
+rm -rf "${STATS}"
+mkdir "${STATS}"
+
+"${BINARY}" \
+--network-configuration="${NETWORK}" \
+--system-configuration="${SYSTEM}" \
+--workload-configuration="${WORKLOAD}" \
+--path="${STATS}/" \
+--run-name="Transformer_HybridParallel" \
+--num-passes=10 \
+--total-stat-rows=1 \
+--stat-row=0 
+[CostModel] Adding (inter-Package, Link) bandwidth: 25, radix: 1, count: 6144 (added cost: $614400)
+[CostModel] Adding (inter-Package, Switch) bandwidth: 25, radix: 96, count: 64 (added cost: $1.9968e+06)
+[CostModel] Adding (inter-Package, Nic) bandwidth: 25, radix: 1, count: 6144 (added cost: $0)
+[CostModel] Adding (inter-Pod, Link) bandwidth: 12.5, radix: 1, count: 1024 (added cost: $94720)
+[CostModel] Adding (inter-Pod, Switch) bandwidth: 12.5, radix: 1024, count: 1 (added cost: $303360)
+[CostModel] Adding (inter-Pod, Nic) bandwidth: 12.5, radix: 1, count: 1024 (added cost: $611840)
+Success in opening system file
+Var is: scheduling-policy: ,val is: LIFO
+Var is: endpoint-delay: ,val is: 1
+Var is: active-chunks-per-dimension: ,val is: 1
+Var is: preferred-dataset-splits: ,val is: 64
+Var is: boost-mode: ,val is: 1
+Var is: all-reduce-implementation: ,val is: halvingDoubling_halvingDoubling
+Var is: all-gather-implementation: ,val is: halvingDoubling_halvingDoubling
+Var is: reduce-scatter-implementation: ,val is: halvingDoubling_halvingDoubling
+Var is: all-to-all-implementation: ,val is: direct_direct
+Var is: collective-optimization: ,val is: localBWAware
+Var is: intra-dimension-scheduling: ,val is: FIFO
+Var is: inter-dimension-scheduling: ,val is: ascending
+Var is: local-mem-roofline-bw: ,val is: 900
+Var is: local-mem-roofline-neg-y-intercept: ,val is: 0.0
+Var is: local-mem-roofline-peak-perf: ,val is: 125000
+Var is: remote-mem-roofline-bw: ,val is: 100
+Var is: remote-mem-roofline-neg-y-intercept: ,val is: 0.0
+Var is: remote-mem-roofline-peak-perf: ,val is: 10000
+Var is: data-type-size: ,val is: 2
+Var is:  ,val is: 2
+The final active chunks per dimension after allocating to queues is: 100000000
+ring of node 0, id: 0 dimension: local total nodes in ring: 16 index in ring: 0 offset: 1total nodes in ring: 16
+ring of node 0, id: 0 dimension: local total nodes in ring: 64 index in ring: 0 offset: 16total nodes in ring: 64
+ring of node 0, id: 0 dimension: local total nodes in ring: 16 index in ring: 0 offset: 1total nodes in ring: 16
+ring of node 0, id: 0 dimension: local total nodes in ring: 64 index in ring: 0 offset: 16total nodes in ring: 64
+ring of node 0, id: 0 dimension: local total nodes in ring: 16 index in ring: 0 offset: 1total nodes in ring: 16
+ring of node 0, id: 0 dimension: local total nodes in ring: 64 index in ring: 0 offset: 16total nodes in ring: 64
+ring of node 0, id: 0 dimension: local total nodes in ring: 16 index in ring: 0 offset: 1total nodes in ring: 16
+ring of node 0, id: 0 dimension: local total nodes in ring: 64 index in ring: 0 offset: 16total nodes in ring: 64
+total nodes: 1024
+LogGP model, the local reduction delay is: 1
+LogGP model, the local reduction delay is: 1
+LogGP model, the local reduction delay is: 1
+LogGP model, the local reduction delay is: 1
+Shared bus modeling enabled? false
+LogGP model, the L is:0 ,o is: 0 ,g is: 0 ,G is: 0.0038
+communication delay (in the case of disabled shared bus): 1
+Shared bus modeling enabled? false
+LogGP model, the L is:0 ,o is: 0 ,g is: 0 ,G is: 0
+communication delay (in the case of disabled shared bus): 1
+Success in opening workload file
+model_parallel_NPU_group: is: 128
+checkpoints layers are: 0, 9, 
+layers initiating fwd_in_bckwd are: 17, 8, 
+
+ring of node 0, id: 0 dimension: local total nodes in ring: 16 index in ring: 0 offset: 1total nodes in ring: 16
+ring of node 0, id: 0 dimension: local total nodes in ring: 8 index in ring: 0 offset: 16total nodes in ring: 8
+ring of node 0, id: 0 dimension: local total nodes in ring: 8 index in ring: 0 offset: 128total nodes in ring: 8
+ring of node 0, id: 0 dimension: local total nodes in ring: 16 index in ring: 0 offset: 1total nodes in ring: 16
+ring of node 0, id: 0 dimension: local total nodes in ring: 8 index in ring: 0 offset: 16total nodes in ring: 8
+ring of node 0, id: 0 dimension: local total nodes in ring: 8 index in ring: 0 offset: 128total nodes in ring: 8
+ring of node 0, id: 0 dimension: local total nodes in ring: 16 index in ring: 0 offset: 1total nodes in ring: 16
+ring of node 0, id: 0 dimension: local total nodes in ring: 8 index in ring: 0 offset: 16total nodes in ring: 8
+ring of node 0, id: 0 dimension: local total nodes in ring: 8 index in ring: 0 offset: 128total nodes in ring: 8
+ring of node 0, id: 0 dimension: local total nodes in ring: 16 index in ring: 0 offset: 1total nodes in ring: 16
+ring of node 0, id: 0 dimension: local total nodes in ring: 8 index in ring: 0 offset: 16total nodes in ring: 8
+ring of node 0, id: 0 dimension: local total nodes in ring: 8 index in ring: 0 offset: 128total nodes in ring: 8
+id: Q1 , depen: -1 , wg_comp_time: 17999994
+id: K1 , depen: -1 , wg_comp_time: 17999994
+id: V1 , depen: -1 , wg_comp_time: 17999994
+id: Q1K1 , depen: -1 , wg_comp_time: 93750
+id: Softmax1 , depen: -1 , wg_comp_time: 93750
+id: Concat1 , depen: -1 , wg_comp_time: 17999994
+id: XW1+b11 , depen: -1 , wg_comp_time: 71999976
+id: XW2+b21 , depen: -1 , wg_comp_time: 71999976
+id: Layernorm1 , depen: -1 , wg_comp_time: 187500
+id: Q2 , depen: -1 , wg_comp_time: 17999994
+id: K2 , depen: -1 , wg_comp_time: 17999994
+id: V2 , depen: -1 , wg_comp_time: 17999994
+id: Q2K2 , depen: -1 , wg_comp_time: 93750
+id: Softmax2 , depen: -1 , wg_comp_time: 93750
+id: Concat2 , depen: -1 , wg_comp_time: 17999994
+id: XW1+b12 , depen: -1 , wg_comp_time: 71999976
+id: XW2+b22 , depen: -1 , wg_comp_time: 71999976
+id: Layernorm2 , depen: -1 , wg_comp_time: 187500
+type: HYBRID_TRANSFORMER_FWD_IN_BCKWD ,num passes: 10 ,lines: 18 compute scale: 1 ,comm scale: 1
+stat path: ./astra_allreduce_analytical/ ,total rows: 1 ,stat row: 0
+CSV path and filename: ./astra_allreduce_analytical/detailed.csv
+Success in opening CSV file for writing the report.
+CSV path and filename: ./astra_allreduce_analytical/EndToEnd.csv
+Success in opening CSV file for writing the report.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Node 17 has been totally disabled
+
+Node 18 has been totally disabled
+
+Node 19 has been totally disabled
+
+Node 20 has been totally disabled
+
+Node 21 has been totally disabled
+
+Node 22 has been totally disabled
+
+Node 23 has been totally disabled
+
+Node 24 has been totally disabled
+
+Node 25 has been totally disabled
+
+Node 26 has been totally disabled
+
+Node 27 has been totally disabled
+
+Node 28 has been totally disabled
+
+Node 29 has been totally disabled
+
+Node 30 has been totally disabled
+
+Node 31 has been totally disabled
+
+
+Node 33 has been totally disabled
+
+Node 34 has been totally disabled
+
+Node 35 has been totally disabled
+
+Node 36 has been totally disabled
+
+Node 37 has been totally disabled
+
+Node 38 has been totally disabled
+
+Node 39 has been totally disabled
+
+Node 40 has been totally disabled
+
+Node 41 has been totally disabled
+
+Node 42 has been totally disabled
+
+Node 43 has been totally disabled
+
+Node 44 has been totally disabled
+
+Node 45 has been totally disabled
+
+Node 46 has been totally disabled
+
+Node 47 has been totally disabled
+
+
+Node 49 has been totally disabled
+
+Node 50 has been totally disabled
+
+Node 51 has been totally disabled
+
+Node 52 has been totally disabled
+
+Node 53 has been totally disabled
+
+Node 54 has been totally disabled
+
+Node 55 has been totally disabled
+
+Node 56 has been totally disabled
+
+Node 57 has been totally disabled
+
+Node 58 has been totally disabled
+
+Node 59 has been totally disabled
+
+Node 60 has been totally disabled
+
+Node 61 has been totally disabled
+
+Node 62 has been totally disabled
+
+Node 63 has been totally disabled
+
+
+Node 65 has been totally disabled
+
+Node 66 has been totally disabled
+
+Node 67 has been totally disabled
+
+Node 68 has been totally disabled
+
+Node 69 has been totally disabled
+
+Node 70 has been totally disabled
+
+Node 71 has been totally disabled
+
+Node 72 has been totally disabled
+
+Node 73 has been totally disabled
+
+Node 74 has been totally disabled
+
+Node 75 has been totally disabled
+
+Node 76 has been totally disabled
+
+Node 77 has been totally disabled
+
+Node 78 has been totally disabled
+
+Node 79 has been totally disabled
+
+
+Node 81 has been totally disabled
+
+Node 82 has been totally disabled
+
+Node 83 has been totally disabled
+
+Node 84 has been totally disabled
+
+Node 85 has been totally disabled
+
+Node 86 has been totally disabled
+
+Node 87 has been totally disabled
+
+Node 88 has been totally disabled
+
+Node 89 has been totally disabled
+
+Node 90 has been totally disabled
+
+Node 91 has been totally disabled
+
+Node 92 has been totally disabled
+
+Node 93 has been totally disabled
+
+Node 94 has been totally disabled
+
+Node 95 has been totally disabled
+
+
+Node 97 has been totally disabled
+
+Node 98 has been totally disabled
+
+Node 99 has been totally disabled
+
+Node 100 has been totally disabled
+
+Node 101 has been totally disabled
+
+Node 102 has been totally disabled
+
+Node 103 has been totally disabled
+
+Node 104 has been totally disabled
+
+Node 105 has been totally disabled
+
+Node 106 has been totally disabled
+
+Node 107 has been totally disabled
+
+Node 108 has been totally disabled
+
+Node 109 has been totally disabled
+
+Node 110 has been totally disabled
+
+Node 111 has been totally disabled
+
+
+Node 113 has been totally disabled
+
+Node 114 has been totally disabled
+
+Node 115 has been totally disabled
+
+Node 116 has been totally disabled
+
+Node 117 has been totally disabled
+
+Node 118 has been totally disabled
+
+Node 119 has been totally disabled
+
+Node 120 has been totally disabled
+
+Node 121 has been totally disabled
+
+Node 122 has been totally disabled
+
+Node 123 has been totally disabled
+
+Node 124 has been totally disabled
+
+Node 125 has been totally disabled
+
+Node 126 has been totally disabled
+
+Node 127 has been totally disabled
+
+
+Node 129 has been totally disabled
+
+Node 130 has been totally disabled
+
+Node 131 has been totally disabled
+
+Node 132 has been totally disabled
+
+Node 133 has been totally disabled
+
+Node 134 has been totally disabled
+
+Node 135 has been totally disabled
+
+Node 136 has been totally disabled
+
+Node 137 has been totally disabled
+
+Node 138 has been totally disabled
+
+Node 139 has been totally disabled
+
+Node 140 has been totally disabled
+
+Node 141 has been totally disabled
+
+Node 142 has been totally disabled
+
+Node 143 has been totally disabled
+
+
+Node 145 has been totally disabled
+
+Node 146 has been totally disabled
+
+Node 147 has been totally disabled
+
+Node 148 has been totally disabled
+
+Node 149 has been totally disabled
+
+Node 150 has been totally disabled
+
+Node 151 has been totally disabled
+
+Node 152 has been totally disabled
+
+Node 153 has been totally disabled
+
+Node 154 has been totally disabled
+
+Node 155 has been totally disabled
+
+Node 156 has been totally disabled
+
+Node 157 has been totally disabled
+
+Node 158 has been totally disabled
+
+Node 159 has been totally disabled
+
+
+Node 161 has been totally disabled
+
+Node 162 has been totally disabled
+
+Node 163 has been totally disabled
+
+Node 164 has been totally disabled
+
+Node 165 has been totally disabled
+
+Node 166 has been totally disabled
+
+Node 167 has been totally disabled
+
+Node 168 has been totally disabled
+
+Node 169 has been totally disabled
+
+Node 170 has been totally disabled
+
+Node 171 has been totally disabled
+
+Node 172 has been totally disabled
+
+Node 173 has been totally disabled
+
+Node 174 has been totally disabled
+
+Node 175 has been totally disabled
+
+
+Node 177 has been totally disabled
+
+Node 178 has been totally disabled
+
+Node 179 has been totally disabled
+
+Node 180 has been totally disabled
+
+Node 181 has been totally disabled
+
+Node 182 has been totally disabled
+
+Node 183 has been totally disabled
+
+Node 184 has been totally disabled
+
+Node 185 has been totally disabled
+
+Node 186 has been totally disabled
+
+Node 187 has been totally disabled
+
+Node 188 has been totally disabled
+
+Node 189 has been totally disabled
+
+Node 190 has been totally disabled
+
+Node 191 has been totally disabled
+
+
+Node 193 has been totally disabled
+
+Node 194 has been totally disabled
+
+Node 195 has been totally disabled
+
+Node 196 has been totally disabled
+
+Node 197 has been totally disabled
+
+Node 198 has been totally disabled
+
+Node 199 has been totally disabled
+
+Node 200 has been totally disabled
+
+Node 201 has been totally disabled
+
+Node 202 has been totally disabled
+
+Node 203 has been totally disabled
+
+Node 204 has been totally disabled
+
+Node 205 has been totally disabled
+
+Node 206 has been totally disabled
+
+Node 207 has been totally disabled
+
+
+Node 209 has been totally disabled
+
+Node 210 has been totally disabled
+
+Node 211 has been totally disabled
+
+Node 212 has been totally disabled
+
+Node 213 has been totally disabled
+
+Node 214 has been totally disabled
+
+Node 215 has been totally disabled
+
+Node 216 has been totally disabled
+
+Node 217 has been totally disabled
+
+Node 218 has been totally disabled
+
+Node 219 has been totally disabled
+
+Node 220 has been totally disabled
+
+Node 221 has been totally disabled
+
+Node 222 has been totally disabled
+
+Node 223 has been totally disabled
+
+
+Node 225 has been totally disabled
+
+Node 226 has been totally disabled
+
+Node 227 has been totally disabled
+
+Node 228 has been totally disabled
+
+Node 229 has been totally disabled
+
+Node 230 has been totally disabled
+
+Node 231 has been totally disabled
+
+Node 232 has been totally disabled
+
+Node 233 has been totally disabled
+
+Node 234 has been totally disabled
+
+Node 235 has been totally disabled
+
+Node 236 has been totally disabled
+
+Node 237 has been totally disabled
+
+Node 238 has been totally disabled
+
+Node 239 has been totally disabled
+
+
+Node 241 has been totally disabled
+
+Node 242 has been totally disabled
+
+Node 243 has been totally disabled
+
+Node 244 has been totally disabled
+
+Node 245 has been totally disabled
+
+Node 246 has been totally disabled
+
+Node 247 has been totally disabled
+
+Node 248 has been totally disabled
+
+Node 249 has been totally disabled
+
+Node 250 has been totally disabled
+
+Node 251 has been totally disabled
+
+Node 252 has been totally disabled
+
+Node 253 has been totally disabled
+
+Node 254 has been totally disabled
+
+Node 255 has been totally disabled
+
+
+Node 257 has been totally disabled
+
+Node 258 has been totally disabled
+
+Node 259 has been totally disabled
+
+Node 260 has been totally disabled
+
+Node 261 has been totally disabled
+
+Node 262 has been totally disabled
+
+Node 263 has been totally disabled
+
+Node 264 has been totally disabled
+
+Node 265 has been totally disabled
+
+Node 266 has been totally disabled
+
+Node 267 has been totally disabled
+
+Node 268 has been totally disabled
+
+Node 269 has been totally disabled
+
+Node 270 has been totally disabled
+
+Node 271 has been totally disabled
+
+
+Node 273 has been totally disabled
+
+Node 274 has been totally disabled
+
+Node 275 has been totally disabled
+
+Node 276 has been totally disabled
+
+Node 277 has been totally disabled
+
+Node 278 has been totally disabled
+
+Node 279 has been totally disabled
+
+Node 280 has been totally disabled
+
+Node 281 has been totally disabled
+
+Node 282 has been totally disabled
+
+Node 283 has been totally disabled
+
+Node 284 has been totally disabled
+
+Node 285 has been totally disabled
+
+Node 286 has been totally disabled
+
+Node 287 has been totally disabled
+
+
+Node 289 has been totally disabled
+
+Node 290 has been totally disabled
+
+Node 291 has been totally disabled
+
+Node 292 has been totally disabled
+
+Node 293 has been totally disabled
+
+Node 294 has been totally disabled
+
+Node 295 has been totally disabled
+
+Node 296 has been totally disabled
+
+Node 297 has been totally disabled
+
+Node 298 has been totally disabled
+
+Node 299 has been totally disabled
+
+Node 300 has been totally disabled
+
+Node 301 has been totally disabled
+
+Node 302 has been totally disabled
+
+Node 303 has been totally disabled
+
+
+Node 305 has been totally disabled
+
+Node 306 has been totally disabled
+
+Node 307 has been totally disabled
+
+Node 308 has been totally disabled
+
+Node 309 has been totally disabled
+
+Node 310 has been totally disabled
+
+Node 311 has been totally disabled
+
+Node 312 has been totally disabled
+
+Node 313 has been totally disabled
+
+Node 314 has been totally disabled
+
+Node 315 has been totally disabled
+
+Node 316 has been totally disabled
+
+Node 317 has been totally disabled
+
+Node 318 has been totally disabled
+
+Node 319 has been totally disabled
+
+
+Node 321 has been totally disabled
+
+Node 322 has been totally disabled
+
+Node 323 has been totally disabled
+
+Node 324 has been totally disabled
+
+Node 325 has been totally disabled
+
+Node 326 has been totally disabled
+
+Node 327 has been totally disabled
+
+Node 328 has been totally disabled
+
+Node 329 has been totally disabled
+
+Node 330 has been totally disabled
+
+Node 331 has been totally disabled
+
+Node 332 has been totally disabled
+
+Node 333 has been totally disabled
+
+Node 334 has been totally disabled
+
+Node 335 has been totally disabled
+
+
+Node 337 has been totally disabled
+
+Node 338 has been totally disabled
+
+Node 339 has been totally disabled
+
+Node 340 has been totally disabled
+
+Node 341 has been totally disabled
+
+Node 342 has been totally disabled
+
+Node 343 has been totally disabled
+
+Node 344 has been totally disabled
+
+Node 345 has been totally disabled
+
+Node 346 has been totally disabled
+
+Node 347 has been totally disabled
+
+Node 348 has been totally disabled
+
+Node 349 has been totally disabled
+
+Node 350 has been totally disabled
+
+Node 351 has been totally disabled
+
+
+Node 353 has been totally disabled
+
+Node 354 has been totally disabled
+
+Node 355 has been totally disabled
+
+Node 356 has been totally disabled
+
+Node 357 has been totally disabled
+
+Node 358 has been totally disabled
+
+Node 359 has been totally disabled
+
+Node 360 has been totally disabled
+
+Node 361 has been totally disabled
+
+Node 362 has been totally disabled
+
+Node 363 has been totally disabled
+
+Node 364 has been totally disabled
+
+Node 365 has been totally disabled
+
+Node 366 has been totally disabled
+
+Node 367 has been totally disabled
+
+
+Node 369 has been totally disabled
+
+Node 370 has been totally disabled
+
+Node 371 has been totally disabled
+
+Node 372 has been totally disabled
+
+Node 373 has been totally disabled
+
+Node 374 has been totally disabled
+
+Node 375 has been totally disabled
+
+Node 376 has been totally disabled
+
+Node 377 has been totally disabled
+
+Node 378 has been totally disabled
+
+Node 379 has been totally disabled
+
+Node 380 has been totally disabled
+
+Node 381 has been totally disabled
+
+Node 382 has been totally disabled
+
+Node 383 has been totally disabled
+
+
+Node 385 has been totally disabled
+
+Node 386 has been totally disabled
+
+Node 387 has been totally disabled
+
+Node 388 has been totally disabled
+
+Node 389 has been totally disabled
+
+Node 390 has been totally disabled
+
+Node 391 has been totally disabled
+
+Node 392 has been totally disabled
+
+Node 393 has been totally disabled
+
+Node 394 has been totally disabled
+
+Node 395 has been totally disabled
+
+Node 396 has been totally disabled
+
+Node 397 has been totally disabled
+
+Node 398 has been totally disabled
+
+Node 399 has been totally disabled
+
+
+Node 401 has been totally disabled
+
+Node 402 has been totally disabled
+
+Node 403 has been totally disabled
+
+Node 404 has been totally disabled
+
+Node 405 has been totally disabled
+
+Node 406 has been totally disabled
+
+Node 407 has been totally disabled
+
+Node 408 has been totally disabled
+
+Node 409 has been totally disabled
+
+Node 410 has been totally disabled
+
+Node 411 has been totally disabled
+
+Node 412 has been totally disabled
+
+Node 413 has been totally disabled
+
+Node 414 has been totally disabled
+
+Node 415 has been totally disabled
+
+
+Node 417 has been totally disabled
+
+Node 418 has been totally disabled
+
+Node 419 has been totally disabled
+
+Node 420 has been totally disabled
+
+Node 421 has been totally disabled
+
+Node 422 has been totally disabled
+
+Node 423 has been totally disabled
+
+Node 424 has been totally disabled
+
+Node 425 has been totally disabled
+
+Node 426 has been totally disabled
+
+Node 427 has been totally disabled
+
+Node 428 has been totally disabled
+
+Node 429 has been totally disabled
+
+Node 430 has been totally disabled
+
+Node 431 has been totally disabled
+
+
+Node 433 has been totally disabled
+
+Node 434 has been totally disabled
+
+Node 435 has been totally disabled
+
+Node 436 has been totally disabled
+
+Node 437 has been totally disabled
+
+Node 438 has been totally disabled
+
+Node 439 has been totally disabled
+
+Node 440 has been totally disabled
+
+Node 441 has been totally disabled
+
+Node 442 has been totally disabled
+
+Node 443 has been totally disabled
+
+Node 444 has been totally disabled
+
+Node 445 has been totally disabled
+
+Node 446 has been totally disabled
+
+Node 447 has been totally disabled
+
+
+Node 449 has been totally disabled
+
+Node 450 has been totally disabled
+
+Node 451 has been totally disabled
+
+Node 452 has been totally disabled
+
+Node 453 has been totally disabled
+
+Node 454 has been totally disabled
+
+Node 455 has been totally disabled
+
+Node 456 has been totally disabled
+
+Node 457 has been totally disabled
+
+Node 458 has been totally disabled
+
+Node 459 has been totally disabled
+
+Node 460 has been totally disabled
+
+Node 461 has been totally disabled
+
+Node 462 has been totally disabled
+
+Node 463 has been totally disabled
+
+
+Node 465 has been totally disabled
+
+Node 466 has been totally disabled
+
+Node 467 has been totally disabled
+
+Node 468 has been totally disabled
+
+Node 469 has been totally disabled
+
+Node 470 has been totally disabled
+
+Node 471 has been totally disabled
+
+Node 472 has been totally disabled
+
+Node 473 has been totally disabled
+
+Node 474 has been totally disabled
+
+Node 475 has been totally disabled
+
+Node 476 has been totally disabled
+
+Node 477 has been totally disabled
+
+Node 478 has been totally disabled
+
+Node 479 has been totally disabled
+
+
+Node 481 has been totally disabled
+
+Node 482 has been totally disabled
+
+Node 483 has been totally disabled
+
+Node 484 has been totally disabled
+
+Node 485 has been totally disabled
+
+Node 486 has been totally disabled
+
+Node 487 has been totally disabled
+
+Node 488 has been totally disabled
+
+Node 489 has been totally disabled
+
+Node 490 has been totally disabled
+
+Node 491 has been totally disabled
+
+Node 492 has been totally disabled
+
+Node 493 has been totally disabled
+
+Node 494 has been totally disabled
+
+Node 495 has been totally disabled
+
+
+Node 497 has been totally disabled
+
+Node 498 has been totally disabled
+
+Node 499 has been totally disabled
+
+Node 500 has been totally disabled
+
+Node 501 has been totally disabled
+
+Node 502 has been totally disabled
+
+Node 503 has been totally disabled
+
+Node 504 has been totally disabled
+
+Node 505 has been totally disabled
+
+Node 506 has been totally disabled
+
+Node 507 has been totally disabled
+
+Node 508 has been totally disabled
+
+Node 509 has been totally disabled
+
+Node 510 has been totally disabled
+
+Node 511 has been totally disabled
+
+
+Node 513 has been totally disabled
+
+Node 514 has been totally disabled
+
+Node 515 has been totally disabled
+
+Node 516 has been totally disabled
+
+Node 517 has been totally disabled
+
+Node 518 has been totally disabled
+
+Node 519 has been totally disabled
+
+Node 520 has been totally disabled
+
+Node 521 has been totally disabled
+
+Node 522 has been totally disabled
+
+Node 523 has been totally disabled
+
+Node 524 has been totally disabled
+
+Node 525 has been totally disabled
+
+Node 526 has been totally disabled
+
+Node 527 has been totally disabled
+
+
+Node 529 has been totally disabled
+
+Node 530 has been totally disabled
+
+Node 531 has been totally disabled
+
+Node 532 has been totally disabled
+
+Node 533 has been totally disabled
+
+Node 534 has been totally disabled
+
+Node 535 has been totally disabled
+
+Node 536 has been totally disabled
+
+Node 537 has been totally disabled
+
+Node 538 has been totally disabled
+
+Node 539 has been totally disabled
+
+Node 540 has been totally disabled
+
+Node 541 has been totally disabled
+
+Node 542 has been totally disabled
+
+Node 543 has been totally disabled
+
+
+Node 545 has been totally disabled
+
+Node 546 has been totally disabled
+
+Node 547 has been totally disabled
+
+Node 548 has been totally disabled
+
+Node 549 has been totally disabled
+
+Node 550 has been totally disabled
+
+Node 551 has been totally disabled
+
+Node 552 has been totally disabled
+
+Node 553 has been totally disabled
+
+Node 554 has been totally disabled
+
+Node 555 has been totally disabled
+
+Node 556 has been totally disabled
+
+Node 557 has been totally disabled
+
+Node 558 has been totally disabled
+
+Node 559 has been totally disabled
+
+
+Node 561 has been totally disabled
+
+Node 562 has been totally disabled
+
+Node 563 has been totally disabled
+
+Node 564 has been totally disabled
+
+Node 565 has been totally disabled
+
+Node 566 has been totally disabled
+
+Node 567 has been totally disabled
+
+Node 568 has been totally disabled
+
+Node 569 has been totally disabled
+
+Node 570 has been totally disabled
+
+Node 571 has been totally disabled
+
+Node 572 has been totally disabled
+
+Node 573 has been totally disabled
+
+Node 574 has been totally disabled
+
+Node 575 has been totally disabled
+
+
+Node 577 has been totally disabled
+
+Node 578 has been totally disabled
+
+Node 579 has been totally disabled
+
+Node 580 has been totally disabled
+
+Node 581 has been totally disabled
+
+Node 582 has been totally disabled
+
+Node 583 has been totally disabled
+
+Node 584 has been totally disabled
+
+Node 585 has been totally disabled
+
+Node 586 has been totally disabled
+
+Node 587 has been totally disabled
+
+Node 588 has been totally disabled
+
+Node 589 has been totally disabled
+
+Node 590 has been totally disabled
+
+Node 591 has been totally disabled
+
+
+Node 593 has been totally disabled
+
+Node 594 has been totally disabled
+
+Node 595 has been totally disabled
+
+Node 596 has been totally disabled
+
+Node 597 has been totally disabled
+
+Node 598 has been totally disabled
+
+Node 599 has been totally disabled
+
+Node 600 has been totally disabled
+
+Node 601 has been totally disabled
+
+Node 602 has been totally disabled
+
+Node 603 has been totally disabled
+
+Node 604 has been totally disabled
+
+Node 605 has been totally disabled
+
+Node 606 has been totally disabled
+
+Node 607 has been totally disabled
+
+
+Node 609 has been totally disabled
+
+Node 610 has been totally disabled
+
+Node 611 has been totally disabled
+
+Node 612 has been totally disabled
+
+Node 613 has been totally disabled
+
+Node 614 has been totally disabled
+
+Node 615 has been totally disabled
+
+Node 616 has been totally disabled
+
+Node 617 has been totally disabled
+
+Node 618 has been totally disabled
+
+Node 619 has been totally disabled
+
+Node 620 has been totally disabled
+
+Node 621 has been totally disabled
+
+Node 622 has been totally disabled
+
+Node 623 has been totally disabled
+
+
+Node 625 has been totally disabled
+
+Node 626 has been totally disabled
+
+Node 627 has been totally disabled
+
+Node 628 has been totally disabled
+
+Node 629 has been totally disabled
+
+Node 630 has been totally disabled
+
+Node 631 has been totally disabled
+
+Node 632 has been totally disabled
+
+Node 633 has been totally disabled
+
+Node 634 has been totally disabled
+
+Node 635 has been totally disabled
+
+Node 636 has been totally disabled
+
+Node 637 has been totally disabled
+
+Node 638 has been totally disabled
+
+Node 639 has been totally disabled
+
+
+Node 641 has been totally disabled
+
+Node 642 has been totally disabled
+
+Node 643 has been totally disabled
+
+Node 644 has been totally disabled
+
+Node 645 has been totally disabled
+
+Node 646 has been totally disabled
+
+Node 647 has been totally disabled
+
+Node 648 has been totally disabled
+
+Node 649 has been totally disabled
+
+Node 650 has been totally disabled
+
+Node 651 has been totally disabled
+
+Node 652 has been totally disabled
+
+Node 653 has been totally disabled
+
+Node 654 has been totally disabled
+
+Node 655 has been totally disabled
+
+
+Node 657 has been totally disabled
+
+Node 658 has been totally disabled
+
+Node 659 has been totally disabled
+
+Node 660 has been totally disabled
+
+Node 661 has been totally disabled
+
+Node 662 has been totally disabled
+
+Node 663 has been totally disabled
+
+Node 664 has been totally disabled
+
+Node 665 has been totally disabled
+
+Node 666 has been totally disabled
+
+Node 667 has been totally disabled
+
+Node 668 has been totally disabled
+
+Node 669 has been totally disabled
+
+Node 670 has been totally disabled
+
+Node 671 has been totally disabled
+
+
+Node 673 has been totally disabled
+
+Node 674 has been totally disabled
+
+Node 675 has been totally disabled
+
+Node 676 has been totally disabled
+
+Node 677 has been totally disabled
+
+Node 678 has been totally disabled
+
+Node 679 has been totally disabled
+
+Node 680 has been totally disabled
+
+Node 681 has been totally disabled
+
+Node 682 has been totally disabled
+
+Node 683 has been totally disabled
+
+Node 684 has been totally disabled
+
+Node 685 has been totally disabled
+
+Node 686 has been totally disabled
+
+Node 687 has been totally disabled
+
+
+Node 689 has been totally disabled
+
+Node 690 has been totally disabled
+
+Node 691 has been totally disabled
+
+Node 692 has been totally disabled
+
+Node 693 has been totally disabled
+
+Node 694 has been totally disabled
+
+Node 695 has been totally disabled
+
+Node 696 has been totally disabled
+
+Node 697 has been totally disabled
+
+Node 698 has been totally disabled
+
+Node 699 has been totally disabled
+
+Node 700 has been totally disabled
+
+Node 701 has been totally disabled
+
+Node 702 has been totally disabled
+
+Node 703 has been totally disabled
+
+
+Node 705 has been totally disabled
+
+Node 706 has been totally disabled
+
+Node 707 has been totally disabled
+
+Node 708 has been totally disabled
+
+Node 709 has been totally disabled
+
+Node 710 has been totally disabled
+
+Node 711 has been totally disabled
+
+Node 712 has been totally disabled
+
+Node 713 has been totally disabled
+
+Node 714 has been totally disabled
+
+Node 715 has been totally disabled
+
+Node 716 has been totally disabled
+
+Node 717 has been totally disabled
+
+Node 718 has been totally disabled
+
+Node 719 has been totally disabled
+
+
+Node 721 has been totally disabled
+
+Node 722 has been totally disabled
+
+Node 723 has been totally disabled
+
+Node 724 has been totally disabled
+
+Node 725 has been totally disabled
+
+Node 726 has been totally disabled
+
+Node 727 has been totally disabled
+
+Node 728 has been totally disabled
+
+Node 729 has been totally disabled
+
+Node 730 has been totally disabled
+
+Node 731 has been totally disabled
+
+Node 732 has been totally disabled
+
+Node 733 has been totally disabled
+
+Node 734 has been totally disabled
+
+Node 735 has been totally disabled
+
+
+Node 737 has been totally disabled
+
+Node 738 has been totally disabled
+
+Node 739 has been totally disabled
+
+Node 740 has been totally disabled
+
+Node 741 has been totally disabled
+
+Node 742 has been totally disabled
+
+Node 743 has been totally disabled
+
+Node 744 has been totally disabled
+
+Node 745 has been totally disabled
+
+Node 746 has been totally disabled
+
+Node 747 has been totally disabled
+
+Node 748 has been totally disabled
+
+Node 749 has been totally disabled
+
+Node 750 has been totally disabled
+
+Node 751 has been totally disabled
+
+
+Node 753 has been totally disabled
+
+Node 754 has been totally disabled
+
+Node 755 has been totally disabled
+
+Node 756 has been totally disabled
+
+Node 757 has been totally disabled
+
+Node 758 has been totally disabled
+
+Node 759 has been totally disabled
+
+Node 760 has been totally disabled
+
+Node 761 has been totally disabled
+
+Node 762 has been totally disabled
+
+Node 763 has been totally disabled
+
+Node 764 has been totally disabled
+
+Node 765 has been totally disabled
+
+Node 766 has been totally disabled
+
+Node 767 has been totally disabled
+
+
+Node 769 has been totally disabled
+
+Node 770 has been totally disabled
+
+Node 771 has been totally disabled
+
+Node 772 has been totally disabled
+
+Node 773 has been totally disabled
+
+Node 774 has been totally disabled
+
+Node 775 has been totally disabled
+
+Node 776 has been totally disabled
+
+Node 777 has been totally disabled
+
+Node 778 has been totally disabled
+
+Node 779 has been totally disabled
+
+Node 780 has been totally disabled
+
+Node 781 has been totally disabled
+
+Node 782 has been totally disabled
+
+Node 783 has been totally disabled
+
+
+Node 785 has been totally disabled
+
+Node 786 has been totally disabled
+
+Node 787 has been totally disabled
+
+Node 788 has been totally disabled
+
+Node 789 has been totally disabled
+
+Node 790 has been totally disabled
+
+Node 791 has been totally disabled
+
+Node 792 has been totally disabled
+
+Node 793 has been totally disabled
+
+Node 794 has been totally disabled
+
+Node 795 has been totally disabled
+
+Node 796 has been totally disabled
+
+Node 797 has been totally disabled
+
+Node 798 has been totally disabled
+
+Node 799 has been totally disabled
+
+
+Node 801 has been totally disabled
+
+Node 802 has been totally disabled
+
+Node 803 has been totally disabled
+
+Node 804 has been totally disabled
+
+Node 805 has been totally disabled
+
+Node 806 has been totally disabled
+
+Node 807 has been totally disabled
+
+Node 808 has been totally disabled
+
+Node 809 has been totally disabled
+
+Node 810 has been totally disabled
+
+Node 811 has been totally disabled
+
+Node 812 has been totally disabled
+
+Node 813 has been totally disabled
+
+Node 814 has been totally disabled
+
+Node 815 has been totally disabled
+
+
+Node 817 has been totally disabled
+
+Node 818 has been totally disabled
+
+Node 819 has been totally disabled
+
+Node 820 has been totally disabled
+
+Node 821 has been totally disabled
+
+Node 822 has been totally disabled
+
+Node 823 has been totally disabled
+
+Node 824 has been totally disabled
+
+Node 825 has been totally disabled
+
+Node 826 has been totally disabled
+
+Node 827 has been totally disabled
+
+Node 828 has been totally disabled
+
+Node 829 has been totally disabled
+
+Node 830 has been totally disabled
+
+Node 831 has been totally disabled
+
+
+Node 833 has been totally disabled
+
+Node 834 has been totally disabled
+
+Node 835 has been totally disabled
+
+Node 836 has been totally disabled
+
+Node 837 has been totally disabled
+
+Node 838 has been totally disabled
+
+Node 839 has been totally disabled
+
+Node 840 has been totally disabled
+
+Node 841 has been totally disabled
+
+Node 842 has been totally disabled
+
+Node 843 has been totally disabled
+
+Node 844 has been totally disabled
+
+Node 845 has been totally disabled
+
+Node 846 has been totally disabled
+
+Node 847 has been totally disabled
+
+
+Node 849 has been totally disabled
+
+Node 850 has been totally disabled
+
+Node 851 has been totally disabled
+
+Node 852 has been totally disabled
+
+Node 853 has been totally disabled
+
+Node 854 has been totally disabled
+
+Node 855 has been totally disabled
+
+Node 856 has been totally disabled
+
+Node 857 has been totally disabled
+
+Node 858 has been totally disabled
+
+Node 859 has been totally disabled
+
+Node 860 has been totally disabled
+
+Node 861 has been totally disabled
+
+Node 862 has been totally disabled
+
+Node 863 has been totally disabled
+
+
+Node 865 has been totally disabled
+
+Node 866 has been totally disabled
+
+Node 867 has been totally disabled
+
+Node 868 has been totally disabled
+
+Node 869 has been totally disabled
+
+Node 870 has been totally disabled
+
+Node 871 has been totally disabled
+
+Node 872 has been totally disabled
+
+Node 873 has been totally disabled
+
+Node 874 has been totally disabled
+
+Node 875 has been totally disabled
+
+Node 876 has been totally disabled
+
+Node 877 has been totally disabled
+
+Node 878 has been totally disabled
+
+Node 879 has been totally disabled
+
+
+Node 881 has been totally disabled
+
+Node 882 has been totally disabled
+
+Node 883 has been totally disabled
+
+Node 884 has been totally disabled
+
+Node 885 has been totally disabled
+
+Node 886 has been totally disabled
+
+Node 887 has been totally disabled
+
+Node 888 has been totally disabled
+
+Node 889 has been totally disabled
+
+Node 890 has been totally disabled
+
+Node 891 has been totally disabled
+
+Node 892 has been totally disabled
+
+Node 893 has been totally disabled
+
+Node 894 has been totally disabled
+
+Node 895 has been totally disabled
+
+
+Node 897 has been totally disabled
+
+Node 898 has been totally disabled
+
+Node 899 has been totally disabled
+
+Node 900 has been totally disabled
+
+Node 901 has been totally disabled
+
+Node 902 has been totally disabled
+
+Node 903 has been totally disabled
+
+Node 904 has been totally disabled
+
+Node 905 has been totally disabled
+
+Node 906 has been totally disabled
+
+Node 907 has been totally disabled
+
+Node 908 has been totally disabled
+
+Node 909 has been totally disabled
+
+Node 910 has been totally disabled
+
+Node 911 has been totally disabled
+
+
+Node 913 has been totally disabled
+
+Node 914 has been totally disabled
+
+Node 915 has been totally disabled
+
+Node 916 has been totally disabled
+
+Node 917 has been totally disabled
+
+Node 918 has been totally disabled
+
+Node 919 has been totally disabled
+
+Node 920 has been totally disabled
+
+Node 921 has been totally disabled
+
+Node 922 has been totally disabled
+
+Node 923 has been totally disabled
+
+Node 924 has been totally disabled
+
+Node 925 has been totally disabled
+
+Node 926 has been totally disabled
+
+Node 927 has been totally disabled
+
+
+Node 929 has been totally disabled
+
+Node 930 has been totally disabled
+
+Node 931 has been totally disabled
+
+Node 932 has been totally disabled
+
+Node 933 has been totally disabled
+
+Node 934 has been totally disabled
+
+Node 935 has been totally disabled
+
+Node 936 has been totally disabled
+
+Node 937 has been totally disabled
+
+Node 938 has been totally disabled
+
+Node 939 has been totally disabled
+
+Node 940 has been totally disabled
+
+Node 941 has been totally disabled
+
+Node 942 has been totally disabled
+
+Node 943 has been totally disabled
+
+
+Node 945 has been totally disabled
+
+Node 946 has been totally disabled
+
+Node 947 has been totally disabled
+
+Node 948 has been totally disabled
+
+Node 949 has been totally disabled
+
+Node 950 has been totally disabled
+
+Node 951 has been totally disabled
+
+Node 952 has been totally disabled
+
+Node 953 has been totally disabled
+
+Node 954 has been totally disabled
+
+Node 955 has been totally disabled
+
+Node 956 has been totally disabled
+
+Node 957 has been totally disabled
+
+Node 958 has been totally disabled
+
+Node 959 has been totally disabled
+
+
+Node 961 has been totally disabled
+
+Node 962 has been totally disabled
+
+Node 963 has been totally disabled
+
+Node 964 has been totally disabled
+
+Node 965 has been totally disabled
+
+Node 966 has been totally disabled
+
+Node 967 has been totally disabled
+
+Node 968 has been totally disabled
+
+Node 969 has been totally disabled
+
+Node 970 has been totally disabled
+
+Node 971 has been totally disabled
+
+Node 972 has been totally disabled
+
+Node 973 has been totally disabled
+
+Node 974 has been totally disabled
+
+Node 975 has been totally disabled
+
+
+Node 977 has been totally disabled
+
+Node 978 has been totally disabled
+
+Node 979 has been totally disabled
+
+Node 980 has been totally disabled
+
+Node 981 has been totally disabled
+
+Node 982 has been totally disabled
+
+Node 983 has been totally disabled
+
+Node 984 has been totally disabled
+
+Node 985 has been totally disabled
+
+Node 986 has been totally disabled
+
+Node 987 has been totally disabled
+
+Node 988 has been totally disabled
+
+Node 989 has been totally disabled
+
+Node 990 has been totally disabled
+
+Node 991 has been totally disabled
+
+
+Node 993 has been totally disabled
+
+Node 994 has been totally disabled
+
+Node 995 has been totally disabled
+
+Node 996 has been totally disabled
+
+Node 997 has been totally disabled
+
+Node 998 has been totally disabled
+
+Node 999 has been totally disabled
+
+Node 1000 has been totally disabled
+
+Node 1001 has been totally disabled
+
+Node 1002 has been totally disabled
+
+Node 1003 has been totally disabled
+
+Node 1004 has been totally disabled
+
+Node 1005 has been totally disabled
+
+Node 1006 has been totally disabled
+
+Node 1007 has been totally disabled
+
+
+Node 1009 has been totally disabled
+
+Node 1010 has been totally disabled
+
+Node 1011 has been totally disabled
+
+Node 1012 has been totally disabled
+
+Node 1013 has been totally disabled
+
+Node 1014 has been totally disabled
+
+Node 1015 has been totally disabled
+
+Node 1016 has been totally disabled
+
+Node 1017 has been totally disabled
+
+Node 1018 has been totally disabled
+
+Node 1019 has been totally disabled
+
+Node 1020 has been totally disabled
+
+Node 1021 has been totally disabled
+
+Node 1022 has been totally disabled
+
+Node 1023 has been totally disabled
+
+CSV path and filename: ./astra_allreduce_analytical/backend_end_to_end.csv
+Success in opening CSV file for writing the report.
+CSV path and filename: ./astra_allreduce_analytical/backend_dim_info.csv
+Success in opening CSV file for writing the report.
+info: no forward pass collective for layer: Q1
+info: no forward pass collective for layer: K1
+info: no forward pass collective for layer: V1
+info: no forward pass collective for layer: Q1K1
+info: no forward pass collective for layer: Softmax1
+info: all-reduce forward pass collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat1 is finished************
+info: no forward pass collective for layer: XW1+b11
+info: all-reduce forward pass collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b21 is finished************
+info: no forward pass collective for layer: Layernorm1
+info: no forward pass collective for layer: Q2
+info: no forward pass collective for layer: K2
+info: no forward pass collective for layer: V2
+info: no forward pass collective for layer: Q2K2
+info: no forward pass collective for layer: Softmax2
+info: all-reduce forward pass collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat2 is finished************
+info: no forward pass collective for layer: XW1+b12
+info: all-reduce forward pass collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b22 is finished************
+info: no forward pass collective for layer: Layernorm2
+***** info, initiating fwd_in_bkwd starting from layer:9 to layer: 17 ,at time: 5604323710
+info: no forward pass collective for layer: Q2
+info: no forward pass collective for layer: K2
+info: no forward pass collective for layer: V2
+info: no forward pass collective for layer: Q2K2
+info: no forward pass collective for layer: Softmax2
+info: all-reduce forward pass collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat2 is finished************
+info: no forward pass collective for layer: XW1+b12
+info: all-reduce forward pass collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b22 is finished************
+info: no input grad collective for layer: Layernorm2
+info: no weight grad collective for layer: Layernorm2
+info: all-reduce input grad collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: XW2+b22 is finished************
+info: all-reduce weight grad collective issued for layer: XW2+b22 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW2+b22 is finished************
+info: no input grad collective for layer: XW1+b12
+info: all-reduce weight grad collective issued for layer: XW1+b12 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW1+b12 is finished************
+info: all-gather input grad collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Concat2 is finished************
+info: all-reduce weight grad collective issued for layer: Concat2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: Concat2 is finished************
+info: no input grad collective for layer: Softmax2
+info: no weight grad collective for layer: Softmax2
+info: no input grad collective for layer: Q2K2
+info: no weight grad collective for layer: Q2K2
+info: no input grad collective for layer: V2
+info: all-reduce weight grad collective issued for layer: V2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: V2 is finished************
+info: no input grad collective for layer: K2
+info: all-reduce weight grad collective issued for layer: K2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: K2 is finished************
+info: all-reduce input grad collective issued for layer: Q2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Q2 is finished************
+info: all-reduce weight grad collective issued for layer: Q2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info, initiating fwd_in_bkwd starting from layer:0 to layer: 8 ,at time: 5310123782063
+***** info: weight gradient collective for layer: Q2 is finished************
+info: no forward pass collective for layer: Q1
+info: no forward pass collective for layer: K1
+info: no forward pass collective for layer: V1
+info: no forward pass collective for layer: Q1K1
+info: no forward pass collective for layer: Softmax1
+info: all-reduce forward pass collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat1 is finished************
+info: no forward pass collective for layer: XW1+b11
+info: all-reduce forward pass collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b21 is finished************
+info: no input grad collective for layer: Layernorm1
+info: no weight grad collective for layer: Layernorm1
+info: all-reduce input grad collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: XW2+b21 is finished************
+info: all-reduce weight grad collective issued for layer: XW2+b21 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW2+b21 is finished************
+info: no input grad collective for layer: XW1+b11
+info: all-reduce weight grad collective issued for layer: XW1+b11 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW1+b11 is finished************
+info: all-gather input grad collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Concat1 is finished************
+info: all-reduce weight grad collective issued for layer: Concat1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: Concat1 is finished************
+info: no input grad collective for layer: Softmax1
+info: no weight grad collective for layer: Softmax1
+info: no input grad collective for layer: Q1K1
+info: no weight grad collective for layer: Q1K1
+info: no input grad collective for layer: V1
+info: all-reduce weight grad collective issued for layer: V1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: V1 is finished************
+info: no input grad collective for layer: K1
+info: all-reduce weight grad collective issued for layer: K1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: K1 is finished************
+info: all-reduce input grad collective issued for layer: Q1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Q1 is finished************
+info: all-reduce weight grad collective issued for layer: Q1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+pass: 0 finished at time: 10614643240415
+***** info: weight gradient collective for layer: Q1 is finished************
+info: no forward pass collective for layer: Q1
+info: no forward pass collective for layer: K1
+info: no forward pass collective for layer: V1
+info: no forward pass collective for layer: Q1K1
+info: no forward pass collective for layer: Softmax1
+info: all-reduce forward pass collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat1 is finished************
+info: no forward pass collective for layer: XW1+b11
+info: all-reduce forward pass collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b21 is finished************
+info: no forward pass collective for layer: Layernorm1
+info: no forward pass collective for layer: Q2
+info: no forward pass collective for layer: K2
+info: no forward pass collective for layer: V2
+info: no forward pass collective for layer: Q2K2
+info: no forward pass collective for layer: Softmax2
+info: all-reduce forward pass collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat2 is finished************
+info: no forward pass collective for layer: XW1+b12
+info: all-reduce forward pass collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b22 is finished************
+info: no forward pass collective for layer: Layernorm2
+***** info, initiating fwd_in_bkwd starting from layer:9 to layer: 17 ,at time: 10620248795687
+info: no forward pass collective for layer: Q2
+info: no forward pass collective for layer: K2
+info: no forward pass collective for layer: V2
+info: no forward pass collective for layer: Q2K2
+info: no forward pass collective for layer: Softmax2
+info: all-reduce forward pass collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat2 is finished************
+info: no forward pass collective for layer: XW1+b12
+info: all-reduce forward pass collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b22 is finished************
+info: no input grad collective for layer: Layernorm2
+info: no weight grad collective for layer: Layernorm2
+info: all-reduce input grad collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: XW2+b22 is finished************
+info: all-reduce weight grad collective issued for layer: XW2+b22 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW2+b22 is finished************
+info: no input grad collective for layer: XW1+b12
+info: all-reduce weight grad collective issued for layer: XW1+b12 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW1+b12 is finished************
+info: all-gather input grad collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Concat2 is finished************
+info: all-reduce weight grad collective issued for layer: Concat2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: Concat2 is finished************
+info: no input grad collective for layer: Softmax2
+info: no weight grad collective for layer: Softmax2
+info: no input grad collective for layer: Q2K2
+info: no weight grad collective for layer: Q2K2
+info: no input grad collective for layer: V2
+info: all-reduce weight grad collective issued for layer: V2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: V2 is finished************
+info: no input grad collective for layer: K2
+info: all-reduce weight grad collective issued for layer: K2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: K2 is finished************
+info: all-reduce input grad collective issued for layer: Q2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Q2 is finished************
+info: all-reduce weight grad collective issued for layer: Q2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info, initiating fwd_in_bkwd starting from layer:0 to layer: 8 ,at time: 15924768254040
+***** info: weight gradient collective for layer: Q2 is finished************
+info: no forward pass collective for layer: Q1
+info: no forward pass collective for layer: K1
+info: no forward pass collective for layer: V1
+info: no forward pass collective for layer: Q1K1
+info: no forward pass collective for layer: Softmax1
+info: all-reduce forward pass collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat1 is finished************
+info: no forward pass collective for layer: XW1+b11
+info: all-reduce forward pass collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b21 is finished************
+info: no input grad collective for layer: Layernorm1
+info: no weight grad collective for layer: Layernorm1
+info: all-reduce input grad collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: XW2+b21 is finished************
+info: all-reduce weight grad collective issued for layer: XW2+b21 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW2+b21 is finished************
+info: no input grad collective for layer: XW1+b11
+info: all-reduce weight grad collective issued for layer: XW1+b11 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW1+b11 is finished************
+info: all-gather input grad collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Concat1 is finished************
+info: all-reduce weight grad collective issued for layer: Concat1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: Concat1 is finished************
+info: no input grad collective for layer: Softmax1
+info: no weight grad collective for layer: Softmax1
+info: no input grad collective for layer: Q1K1
+info: no weight grad collective for layer: Q1K1
+info: no input grad collective for layer: V1
+info: all-reduce weight grad collective issued for layer: V1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: V1 is finished************
+info: no input grad collective for layer: K1
+info: all-reduce weight grad collective issued for layer: K1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: K1 is finished************
+info: all-reduce input grad collective issued for layer: Q1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Q1 is finished************
+info: all-reduce weight grad collective issued for layer: Q1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+pass: 1 finished at time: 21229287712392
+***** info: weight gradient collective for layer: Q1 is finished************
+info: no forward pass collective for layer: Q1
+info: no forward pass collective for layer: K1
+info: no forward pass collective for layer: V1
+info: no forward pass collective for layer: Q1K1
+info: no forward pass collective for layer: Softmax1
+info: all-reduce forward pass collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat1 is finished************
+info: no forward pass collective for layer: XW1+b11
+info: all-reduce forward pass collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b21 is finished************
+info: no forward pass collective for layer: Layernorm1
+info: no forward pass collective for layer: Q2
+info: no forward pass collective for layer: K2
+info: no forward pass collective for layer: V2
+info: no forward pass collective for layer: Q2K2
+info: no forward pass collective for layer: Softmax2
+info: all-reduce forward pass collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat2 is finished************
+info: no forward pass collective for layer: XW1+b12
+info: all-reduce forward pass collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b22 is finished************
+info: no forward pass collective for layer: Layernorm2
+***** info, initiating fwd_in_bkwd starting from layer:9 to layer: 17 ,at time: 21234893267664
+info: no forward pass collective for layer: Q2
+info: no forward pass collective for layer: K2
+info: no forward pass collective for layer: V2
+info: no forward pass collective for layer: Q2K2
+info: no forward pass collective for layer: Softmax2
+info: all-reduce forward pass collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat2 is finished************
+info: no forward pass collective for layer: XW1+b12
+info: all-reduce forward pass collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b22 is finished************
+info: no input grad collective for layer: Layernorm2
+info: no weight grad collective for layer: Layernorm2
+info: all-reduce input grad collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: XW2+b22 is finished************
+info: all-reduce weight grad collective issued for layer: XW2+b22 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW2+b22 is finished************
+info: no input grad collective for layer: XW1+b12
+info: all-reduce weight grad collective issued for layer: XW1+b12 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW1+b12 is finished************
+info: all-gather input grad collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Concat2 is finished************
+info: all-reduce weight grad collective issued for layer: Concat2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: Concat2 is finished************
+info: no input grad collective for layer: Softmax2
+info: no weight grad collective for layer: Softmax2
+info: no input grad collective for layer: Q2K2
+info: no weight grad collective for layer: Q2K2
+info: no input grad collective for layer: V2
+info: all-reduce weight grad collective issued for layer: V2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: V2 is finished************
+info: no input grad collective for layer: K2
+info: all-reduce weight grad collective issued for layer: K2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: K2 is finished************
+info: all-reduce input grad collective issued for layer: Q2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Q2 is finished************
+info: all-reduce weight grad collective issued for layer: Q2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info, initiating fwd_in_bkwd starting from layer:0 to layer: 8 ,at time: 26539412726017
+***** info: weight gradient collective for layer: Q2 is finished************
+info: no forward pass collective for layer: Q1
+info: no forward pass collective for layer: K1
+info: no forward pass collective for layer: V1
+info: no forward pass collective for layer: Q1K1
+info: no forward pass collective for layer: Softmax1
+info: all-reduce forward pass collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat1 is finished************
+info: no forward pass collective for layer: XW1+b11
+info: all-reduce forward pass collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b21 is finished************
+info: no input grad collective for layer: Layernorm1
+info: no weight grad collective for layer: Layernorm1
+info: all-reduce input grad collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: XW2+b21 is finished************
+info: all-reduce weight grad collective issued for layer: XW2+b21 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW2+b21 is finished************
+info: no input grad collective for layer: XW1+b11
+info: all-reduce weight grad collective issued for layer: XW1+b11 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW1+b11 is finished************
+info: all-gather input grad collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Concat1 is finished************
+info: all-reduce weight grad collective issued for layer: Concat1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: Concat1 is finished************
+info: no input grad collective for layer: Softmax1
+info: no weight grad collective for layer: Softmax1
+info: no input grad collective for layer: Q1K1
+info: no weight grad collective for layer: Q1K1
+info: no input grad collective for layer: V1
+info: all-reduce weight grad collective issued for layer: V1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: V1 is finished************
+info: no input grad collective for layer: K1
+info: all-reduce weight grad collective issued for layer: K1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: K1 is finished************
+info: all-reduce input grad collective issued for layer: Q1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Q1 is finished************
+info: all-reduce weight grad collective issued for layer: Q1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+pass: 2 finished at time: 31843932184369
+***** info: weight gradient collective for layer: Q1 is finished************
+info: no forward pass collective for layer: Q1
+info: no forward pass collective for layer: K1
+info: no forward pass collective for layer: V1
+info: no forward pass collective for layer: Q1K1
+info: no forward pass collective for layer: Softmax1
+info: all-reduce forward pass collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat1 is finished************
+info: no forward pass collective for layer: XW1+b11
+info: all-reduce forward pass collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b21 is finished************
+info: no forward pass collective for layer: Layernorm1
+info: no forward pass collective for layer: Q2
+info: no forward pass collective for layer: K2
+info: no forward pass collective for layer: V2
+info: no forward pass collective for layer: Q2K2
+info: no forward pass collective for layer: Softmax2
+info: all-reduce forward pass collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat2 is finished************
+info: no forward pass collective for layer: XW1+b12
+info: all-reduce forward pass collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b22 is finished************
+info: no forward pass collective for layer: Layernorm2
+***** info, initiating fwd_in_bkwd starting from layer:9 to layer: 17 ,at time: 31849537739641
+info: no forward pass collective for layer: Q2
+info: no forward pass collective for layer: K2
+info: no forward pass collective for layer: V2
+info: no forward pass collective for layer: Q2K2
+info: no forward pass collective for layer: Softmax2
+info: all-reduce forward pass collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat2 is finished************
+info: no forward pass collective for layer: XW1+b12
+info: all-reduce forward pass collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b22 is finished************
+info: no input grad collective for layer: Layernorm2
+info: no weight grad collective for layer: Layernorm2
+info: all-reduce input grad collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: XW2+b22 is finished************
+info: all-reduce weight grad collective issued for layer: XW2+b22 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW2+b22 is finished************
+info: no input grad collective for layer: XW1+b12
+info: all-reduce weight grad collective issued for layer: XW1+b12 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW1+b12 is finished************
+info: all-gather input grad collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Concat2 is finished************
+info: all-reduce weight grad collective issued for layer: Concat2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: Concat2 is finished************
+info: no input grad collective for layer: Softmax2
+info: no weight grad collective for layer: Softmax2
+info: no input grad collective for layer: Q2K2
+info: no weight grad collective for layer: Q2K2
+info: no input grad collective for layer: V2
+info: all-reduce weight grad collective issued for layer: V2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: V2 is finished************
+info: no input grad collective for layer: K2
+info: all-reduce weight grad collective issued for layer: K2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: K2 is finished************
+info: all-reduce input grad collective issued for layer: Q2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Q2 is finished************
+info: all-reduce weight grad collective issued for layer: Q2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info, initiating fwd_in_bkwd starting from layer:0 to layer: 8 ,at time: 37154057197994
+***** info: weight gradient collective for layer: Q2 is finished************
+info: no forward pass collective for layer: Q1
+info: no forward pass collective for layer: K1
+info: no forward pass collective for layer: V1
+info: no forward pass collective for layer: Q1K1
+info: no forward pass collective for layer: Softmax1
+info: all-reduce forward pass collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat1 is finished************
+info: no forward pass collective for layer: XW1+b11
+info: all-reduce forward pass collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b21 is finished************
+info: no input grad collective for layer: Layernorm1
+info: no weight grad collective for layer: Layernorm1
+info: all-reduce input grad collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: XW2+b21 is finished************
+info: all-reduce weight grad collective issued for layer: XW2+b21 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW2+b21 is finished************
+info: no input grad collective for layer: XW1+b11
+info: all-reduce weight grad collective issued for layer: XW1+b11 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW1+b11 is finished************
+info: all-gather input grad collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Concat1 is finished************
+info: all-reduce weight grad collective issued for layer: Concat1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: Concat1 is finished************
+info: no input grad collective for layer: Softmax1
+info: no weight grad collective for layer: Softmax1
+info: no input grad collective for layer: Q1K1
+info: no weight grad collective for layer: Q1K1
+info: no input grad collective for layer: V1
+info: all-reduce weight grad collective issued for layer: V1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: V1 is finished************
+info: no input grad collective for layer: K1
+info: all-reduce weight grad collective issued for layer: K1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: K1 is finished************
+info: all-reduce input grad collective issued for layer: Q1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Q1 is finished************
+info: all-reduce weight grad collective issued for layer: Q1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+pass: 3 finished at time: 42458576656346
+***** info: weight gradient collective for layer: Q1 is finished************
+info: no forward pass collective for layer: Q1
+info: no forward pass collective for layer: K1
+info: no forward pass collective for layer: V1
+info: no forward pass collective for layer: Q1K1
+info: no forward pass collective for layer: Softmax1
+info: all-reduce forward pass collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat1 is finished************
+info: no forward pass collective for layer: XW1+b11
+info: all-reduce forward pass collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b21 is finished************
+info: no forward pass collective for layer: Layernorm1
+info: no forward pass collective for layer: Q2
+info: no forward pass collective for layer: K2
+info: no forward pass collective for layer: V2
+info: no forward pass collective for layer: Q2K2
+info: no forward pass collective for layer: Softmax2
+info: all-reduce forward pass collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat2 is finished************
+info: no forward pass collective for layer: XW1+b12
+info: all-reduce forward pass collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b22 is finished************
+info: no forward pass collective for layer: Layernorm2
+***** info, initiating fwd_in_bkwd starting from layer:9 to layer: 17 ,at time: 42464182211618
+info: no forward pass collective for layer: Q2
+info: no forward pass collective for layer: K2
+info: no forward pass collective for layer: V2
+info: no forward pass collective for layer: Q2K2
+info: no forward pass collective for layer: Softmax2
+info: all-reduce forward pass collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat2 is finished************
+info: no forward pass collective for layer: XW1+b12
+info: all-reduce forward pass collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b22 is finished************
+info: no input grad collective for layer: Layernorm2
+info: no weight grad collective for layer: Layernorm2
+info: all-reduce input grad collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: XW2+b22 is finished************
+info: all-reduce weight grad collective issued for layer: XW2+b22 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW2+b22 is finished************
+info: no input grad collective for layer: XW1+b12
+info: all-reduce weight grad collective issued for layer: XW1+b12 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW1+b12 is finished************
+info: all-gather input grad collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Concat2 is finished************
+info: all-reduce weight grad collective issued for layer: Concat2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: Concat2 is finished************
+info: no input grad collective for layer: Softmax2
+info: no weight grad collective for layer: Softmax2
+info: no input grad collective for layer: Q2K2
+info: no weight grad collective for layer: Q2K2
+info: no input grad collective for layer: V2
+info: all-reduce weight grad collective issued for layer: V2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: V2 is finished************
+info: no input grad collective for layer: K2
+info: all-reduce weight grad collective issued for layer: K2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: K2 is finished************
+info: all-reduce input grad collective issued for layer: Q2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Q2 is finished************
+info: all-reduce weight grad collective issued for layer: Q2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info, initiating fwd_in_bkwd starting from layer:0 to layer: 8 ,at time: 47768701669971
+***** info: weight gradient collective for layer: Q2 is finished************
+info: no forward pass collective for layer: Q1
+info: no forward pass collective for layer: K1
+info: no forward pass collective for layer: V1
+info: no forward pass collective for layer: Q1K1
+info: no forward pass collective for layer: Softmax1
+info: all-reduce forward pass collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat1 is finished************
+info: no forward pass collective for layer: XW1+b11
+info: all-reduce forward pass collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b21 is finished************
+info: no input grad collective for layer: Layernorm1
+info: no weight grad collective for layer: Layernorm1
+info: all-reduce input grad collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: XW2+b21 is finished************
+info: all-reduce weight grad collective issued for layer: XW2+b21 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW2+b21 is finished************
+info: no input grad collective for layer: XW1+b11
+info: all-reduce weight grad collective issued for layer: XW1+b11 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW1+b11 is finished************
+info: all-gather input grad collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Concat1 is finished************
+info: all-reduce weight grad collective issued for layer: Concat1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: Concat1 is finished************
+info: no input grad collective for layer: Softmax1
+info: no weight grad collective for layer: Softmax1
+info: no input grad collective for layer: Q1K1
+info: no weight grad collective for layer: Q1K1
+info: no input grad collective for layer: V1
+info: all-reduce weight grad collective issued for layer: V1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: V1 is finished************
+info: no input grad collective for layer: K1
+info: all-reduce weight grad collective issued for layer: K1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: K1 is finished************
+info: all-reduce input grad collective issued for layer: Q1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Q1 is finished************
+info: all-reduce weight grad collective issued for layer: Q1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+pass: 4 finished at time: 53073221128323
+***** info: weight gradient collective for layer: Q1 is finished************
+info: no forward pass collective for layer: Q1
+info: no forward pass collective for layer: K1
+info: no forward pass collective for layer: V1
+info: no forward pass collective for layer: Q1K1
+info: no forward pass collective for layer: Softmax1
+info: all-reduce forward pass collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat1 is finished************
+info: no forward pass collective for layer: XW1+b11
+info: all-reduce forward pass collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b21 is finished************
+info: no forward pass collective for layer: Layernorm1
+info: no forward pass collective for layer: Q2
+info: no forward pass collective for layer: K2
+info: no forward pass collective for layer: V2
+info: no forward pass collective for layer: Q2K2
+info: no forward pass collective for layer: Softmax2
+info: all-reduce forward pass collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat2 is finished************
+info: no forward pass collective for layer: XW1+b12
+info: all-reduce forward pass collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b22 is finished************
+info: no forward pass collective for layer: Layernorm2
+***** info, initiating fwd_in_bkwd starting from layer:9 to layer: 17 ,at time: 53078826683595
+info: no forward pass collective for layer: Q2
+info: no forward pass collective for layer: K2
+info: no forward pass collective for layer: V2
+info: no forward pass collective for layer: Q2K2
+info: no forward pass collective for layer: Softmax2
+info: all-reduce forward pass collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat2 is finished************
+info: no forward pass collective for layer: XW1+b12
+info: all-reduce forward pass collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b22 is finished************
+info: no input grad collective for layer: Layernorm2
+info: no weight grad collective for layer: Layernorm2
+info: all-reduce input grad collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: XW2+b22 is finished************
+info: all-reduce weight grad collective issued for layer: XW2+b22 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW2+b22 is finished************
+info: no input grad collective for layer: XW1+b12
+info: all-reduce weight grad collective issued for layer: XW1+b12 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW1+b12 is finished************
+info: all-gather input grad collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Concat2 is finished************
+info: all-reduce weight grad collective issued for layer: Concat2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: Concat2 is finished************
+info: no input grad collective for layer: Softmax2
+info: no weight grad collective for layer: Softmax2
+info: no input grad collective for layer: Q2K2
+info: no weight grad collective for layer: Q2K2
+info: no input grad collective for layer: V2
+info: all-reduce weight grad collective issued for layer: V2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: V2 is finished************
+info: no input grad collective for layer: K2
+info: all-reduce weight grad collective issued for layer: K2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: K2 is finished************
+info: all-reduce input grad collective issued for layer: Q2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Q2 is finished************
+info: all-reduce weight grad collective issued for layer: Q2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info, initiating fwd_in_bkwd starting from layer:0 to layer: 8 ,at time: 58383346141948
+***** info: weight gradient collective for layer: Q2 is finished************
+info: no forward pass collective for layer: Q1
+info: no forward pass collective for layer: K1
+info: no forward pass collective for layer: V1
+info: no forward pass collective for layer: Q1K1
+info: no forward pass collective for layer: Softmax1
+info: all-reduce forward pass collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat1 is finished************
+info: no forward pass collective for layer: XW1+b11
+info: all-reduce forward pass collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b21 is finished************
+info: no input grad collective for layer: Layernorm1
+info: no weight grad collective for layer: Layernorm1
+info: all-reduce input grad collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: XW2+b21 is finished************
+info: all-reduce weight grad collective issued for layer: XW2+b21 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW2+b21 is finished************
+info: no input grad collective for layer: XW1+b11
+info: all-reduce weight grad collective issued for layer: XW1+b11 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW1+b11 is finished************
+info: all-gather input grad collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Concat1 is finished************
+info: all-reduce weight grad collective issued for layer: Concat1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: Concat1 is finished************
+info: no input grad collective for layer: Softmax1
+info: no weight grad collective for layer: Softmax1
+info: no input grad collective for layer: Q1K1
+info: no weight grad collective for layer: Q1K1
+info: no input grad collective for layer: V1
+info: all-reduce weight grad collective issued for layer: V1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: V1 is finished************
+info: no input grad collective for layer: K1
+info: all-reduce weight grad collective issued for layer: K1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: K1 is finished************
+info: all-reduce input grad collective issued for layer: Q1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Q1 is finished************
+info: all-reduce weight grad collective issued for layer: Q1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+pass: 5 finished at time: 63687865600300
+***** info: weight gradient collective for layer: Q1 is finished************
+info: no forward pass collective for layer: Q1
+info: no forward pass collective for layer: K1
+info: no forward pass collective for layer: V1
+info: no forward pass collective for layer: Q1K1
+info: no forward pass collective for layer: Softmax1
+info: all-reduce forward pass collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat1 is finished************
+info: no forward pass collective for layer: XW1+b11
+info: all-reduce forward pass collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b21 is finished************
+info: no forward pass collective for layer: Layernorm1
+info: no forward pass collective for layer: Q2
+info: no forward pass collective for layer: K2
+info: no forward pass collective for layer: V2
+info: no forward pass collective for layer: Q2K2
+info: no forward pass collective for layer: Softmax2
+info: all-reduce forward pass collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat2 is finished************
+info: no forward pass collective for layer: XW1+b12
+info: all-reduce forward pass collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b22 is finished************
+info: no forward pass collective for layer: Layernorm2
+***** info, initiating fwd_in_bkwd starting from layer:9 to layer: 17 ,at time: 63693471155572
+info: no forward pass collective for layer: Q2
+info: no forward pass collective for layer: K2
+info: no forward pass collective for layer: V2
+info: no forward pass collective for layer: Q2K2
+info: no forward pass collective for layer: Softmax2
+info: all-reduce forward pass collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat2 is finished************
+info: no forward pass collective for layer: XW1+b12
+info: all-reduce forward pass collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b22 is finished************
+info: no input grad collective for layer: Layernorm2
+info: no weight grad collective for layer: Layernorm2
+info: all-reduce input grad collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: XW2+b22 is finished************
+info: all-reduce weight grad collective issued for layer: XW2+b22 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW2+b22 is finished************
+info: no input grad collective for layer: XW1+b12
+info: all-reduce weight grad collective issued for layer: XW1+b12 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW1+b12 is finished************
+info: all-gather input grad collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Concat2 is finished************
+info: all-reduce weight grad collective issued for layer: Concat2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: Concat2 is finished************
+info: no input grad collective for layer: Softmax2
+info: no weight grad collective for layer: Softmax2
+info: no input grad collective for layer: Q2K2
+info: no weight grad collective for layer: Q2K2
+info: no input grad collective for layer: V2
+info: all-reduce weight grad collective issued for layer: V2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: V2 is finished************
+info: no input grad collective for layer: K2
+info: all-reduce weight grad collective issued for layer: K2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: K2 is finished************
+info: all-reduce input grad collective issued for layer: Q2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Q2 is finished************
+info: all-reduce weight grad collective issued for layer: Q2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info, initiating fwd_in_bkwd starting from layer:0 to layer: 8 ,at time: 68997990613925
+***** info: weight gradient collective for layer: Q2 is finished************
+info: no forward pass collective for layer: Q1
+info: no forward pass collective for layer: K1
+info: no forward pass collective for layer: V1
+info: no forward pass collective for layer: Q1K1
+info: no forward pass collective for layer: Softmax1
+info: all-reduce forward pass collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat1 is finished************
+info: no forward pass collective for layer: XW1+b11
+info: all-reduce forward pass collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b21 is finished************
+info: no input grad collective for layer: Layernorm1
+info: no weight grad collective for layer: Layernorm1
+info: all-reduce input grad collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: XW2+b21 is finished************
+info: all-reduce weight grad collective issued for layer: XW2+b21 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW2+b21 is finished************
+info: no input grad collective for layer: XW1+b11
+info: all-reduce weight grad collective issued for layer: XW1+b11 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW1+b11 is finished************
+info: all-gather input grad collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Concat1 is finished************
+info: all-reduce weight grad collective issued for layer: Concat1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: Concat1 is finished************
+info: no input grad collective for layer: Softmax1
+info: no weight grad collective for layer: Softmax1
+info: no input grad collective for layer: Q1K1
+info: no weight grad collective for layer: Q1K1
+info: no input grad collective for layer: V1
+info: all-reduce weight grad collective issued for layer: V1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: V1 is finished************
+info: no input grad collective for layer: K1
+info: all-reduce weight grad collective issued for layer: K1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: K1 is finished************
+info: all-reduce input grad collective issued for layer: Q1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Q1 is finished************
+info: all-reduce weight grad collective issued for layer: Q1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+pass: 6 finished at time: 74302510072277
+***** info: weight gradient collective for layer: Q1 is finished************
+info: no forward pass collective for layer: Q1
+info: no forward pass collective for layer: K1
+info: no forward pass collective for layer: V1
+info: no forward pass collective for layer: Q1K1
+info: no forward pass collective for layer: Softmax1
+info: all-reduce forward pass collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat1 is finished************
+info: no forward pass collective for layer: XW1+b11
+info: all-reduce forward pass collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b21 is finished************
+info: no forward pass collective for layer: Layernorm1
+info: no forward pass collective for layer: Q2
+info: no forward pass collective for layer: K2
+info: no forward pass collective for layer: V2
+info: no forward pass collective for layer: Q2K2
+info: no forward pass collective for layer: Softmax2
+info: all-reduce forward pass collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat2 is finished************
+info: no forward pass collective for layer: XW1+b12
+info: all-reduce forward pass collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b22 is finished************
+info: no forward pass collective for layer: Layernorm2
+***** info, initiating fwd_in_bkwd starting from layer:9 to layer: 17 ,at time: 74308115627549
+info: no forward pass collective for layer: Q2
+info: no forward pass collective for layer: K2
+info: no forward pass collective for layer: V2
+info: no forward pass collective for layer: Q2K2
+info: no forward pass collective for layer: Softmax2
+info: all-reduce forward pass collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat2 is finished************
+info: no forward pass collective for layer: XW1+b12
+info: all-reduce forward pass collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b22 is finished************
+info: no input grad collective for layer: Layernorm2
+info: no weight grad collective for layer: Layernorm2
+info: all-reduce input grad collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: XW2+b22 is finished************
+info: all-reduce weight grad collective issued for layer: XW2+b22 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW2+b22 is finished************
+info: no input grad collective for layer: XW1+b12
+info: all-reduce weight grad collective issued for layer: XW1+b12 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW1+b12 is finished************
+info: all-gather input grad collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Concat2 is finished************
+info: all-reduce weight grad collective issued for layer: Concat2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: Concat2 is finished************
+info: no input grad collective for layer: Softmax2
+info: no weight grad collective for layer: Softmax2
+info: no input grad collective for layer: Q2K2
+info: no weight grad collective for layer: Q2K2
+info: no input grad collective for layer: V2
+info: all-reduce weight grad collective issued for layer: V2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: V2 is finished************
+info: no input grad collective for layer: K2
+info: all-reduce weight grad collective issued for layer: K2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: K2 is finished************
+info: all-reduce input grad collective issued for layer: Q2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Q2 is finished************
+info: all-reduce weight grad collective issued for layer: Q2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info, initiating fwd_in_bkwd starting from layer:0 to layer: 8 ,at time: 79612635085902
+***** info: weight gradient collective for layer: Q2 is finished************
+info: no forward pass collective for layer: Q1
+info: no forward pass collective for layer: K1
+info: no forward pass collective for layer: V1
+info: no forward pass collective for layer: Q1K1
+info: no forward pass collective for layer: Softmax1
+info: all-reduce forward pass collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat1 is finished************
+info: no forward pass collective for layer: XW1+b11
+info: all-reduce forward pass collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b21 is finished************
+info: no input grad collective for layer: Layernorm1
+info: no weight grad collective for layer: Layernorm1
+info: all-reduce input grad collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: XW2+b21 is finished************
+info: all-reduce weight grad collective issued for layer: XW2+b21 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW2+b21 is finished************
+info: no input grad collective for layer: XW1+b11
+info: all-reduce weight grad collective issued for layer: XW1+b11 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW1+b11 is finished************
+info: all-gather input grad collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Concat1 is finished************
+info: all-reduce weight grad collective issued for layer: Concat1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: Concat1 is finished************
+info: no input grad collective for layer: Softmax1
+info: no weight grad collective for layer: Softmax1
+info: no input grad collective for layer: Q1K1
+info: no weight grad collective for layer: Q1K1
+info: no input grad collective for layer: V1
+info: all-reduce weight grad collective issued for layer: V1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: V1 is finished************
+info: no input grad collective for layer: K1
+info: all-reduce weight grad collective issued for layer: K1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: K1 is finished************
+info: all-reduce input grad collective issued for layer: Q1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Q1 is finished************
+info: all-reduce weight grad collective issued for layer: Q1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+pass: 7 finished at time: 84917154544254
+***** info: weight gradient collective for layer: Q1 is finished************
+info: no forward pass collective for layer: Q1
+info: no forward pass collective for layer: K1
+info: no forward pass collective for layer: V1
+info: no forward pass collective for layer: Q1K1
+info: no forward pass collective for layer: Softmax1
+info: all-reduce forward pass collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat1 is finished************
+info: no forward pass collective for layer: XW1+b11
+info: all-reduce forward pass collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b21 is finished************
+info: no forward pass collective for layer: Layernorm1
+info: no forward pass collective for layer: Q2
+info: no forward pass collective for layer: K2
+info: no forward pass collective for layer: V2
+info: no forward pass collective for layer: Q2K2
+info: no forward pass collective for layer: Softmax2
+info: all-reduce forward pass collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat2 is finished************
+info: no forward pass collective for layer: XW1+b12
+info: all-reduce forward pass collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b22 is finished************
+info: no forward pass collective for layer: Layernorm2
+***** info, initiating fwd_in_bkwd starting from layer:9 to layer: 17 ,at time: 84922760099526
+info: no forward pass collective for layer: Q2
+info: no forward pass collective for layer: K2
+info: no forward pass collective for layer: V2
+info: no forward pass collective for layer: Q2K2
+info: no forward pass collective for layer: Softmax2
+info: all-reduce forward pass collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat2 is finished************
+info: no forward pass collective for layer: XW1+b12
+info: all-reduce forward pass collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b22 is finished************
+info: no input grad collective for layer: Layernorm2
+info: no weight grad collective for layer: Layernorm2
+info: all-reduce input grad collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: XW2+b22 is finished************
+info: all-reduce weight grad collective issued for layer: XW2+b22 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW2+b22 is finished************
+info: no input grad collective for layer: XW1+b12
+info: all-reduce weight grad collective issued for layer: XW1+b12 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW1+b12 is finished************
+info: all-gather input grad collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Concat2 is finished************
+info: all-reduce weight grad collective issued for layer: Concat2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: Concat2 is finished************
+info: no input grad collective for layer: Softmax2
+info: no weight grad collective for layer: Softmax2
+info: no input grad collective for layer: Q2K2
+info: no weight grad collective for layer: Q2K2
+info: no input grad collective for layer: V2
+info: all-reduce weight grad collective issued for layer: V2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: V2 is finished************
+info: no input grad collective for layer: K2
+info: all-reduce weight grad collective issued for layer: K2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: K2 is finished************
+info: all-reduce input grad collective issued for layer: Q2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Q2 is finished************
+info: all-reduce weight grad collective issued for layer: Q2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info, initiating fwd_in_bkwd starting from layer:0 to layer: 8 ,at time: 90227279557879
+***** info: weight gradient collective for layer: Q2 is finished************
+info: no forward pass collective for layer: Q1
+info: no forward pass collective for layer: K1
+info: no forward pass collective for layer: V1
+info: no forward pass collective for layer: Q1K1
+info: no forward pass collective for layer: Softmax1
+info: all-reduce forward pass collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat1 is finished************
+info: no forward pass collective for layer: XW1+b11
+info: all-reduce forward pass collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b21 is finished************
+info: no input grad collective for layer: Layernorm1
+info: no weight grad collective for layer: Layernorm1
+info: all-reduce input grad collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: XW2+b21 is finished************
+info: all-reduce weight grad collective issued for layer: XW2+b21 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW2+b21 is finished************
+info: no input grad collective for layer: XW1+b11
+info: all-reduce weight grad collective issued for layer: XW1+b11 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW1+b11 is finished************
+info: all-gather input grad collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Concat1 is finished************
+info: all-reduce weight grad collective issued for layer: Concat1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: Concat1 is finished************
+info: no input grad collective for layer: Softmax1
+info: no weight grad collective for layer: Softmax1
+info: no input grad collective for layer: Q1K1
+info: no weight grad collective for layer: Q1K1
+info: no input grad collective for layer: V1
+info: all-reduce weight grad collective issued for layer: V1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: V1 is finished************
+info: no input grad collective for layer: K1
+info: all-reduce weight grad collective issued for layer: K1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: K1 is finished************
+info: all-reduce input grad collective issued for layer: Q1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Q1 is finished************
+info: all-reduce weight grad collective issued for layer: Q1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+pass: 8 finished at time: 95531799016231
+***** info: weight gradient collective for layer: Q1 is finished************
+info: no forward pass collective for layer: Q1
+info: no forward pass collective for layer: K1
+info: no forward pass collective for layer: V1
+info: no forward pass collective for layer: Q1K1
+info: no forward pass collective for layer: Softmax1
+info: all-reduce forward pass collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat1 is finished************
+info: no forward pass collective for layer: XW1+b11
+info: all-reduce forward pass collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b21 is finished************
+info: no forward pass collective for layer: Layernorm1
+info: no forward pass collective for layer: Q2
+info: no forward pass collective for layer: K2
+info: no forward pass collective for layer: V2
+info: no forward pass collective for layer: Q2K2
+info: no forward pass collective for layer: Softmax2
+info: all-reduce forward pass collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat2 is finished************
+info: no forward pass collective for layer: XW1+b12
+info: all-reduce forward pass collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b22 is finished************
+info: no forward pass collective for layer: Layernorm2
+***** info, initiating fwd_in_bkwd starting from layer:9 to layer: 17 ,at time: 95537404571503
+info: no forward pass collective for layer: Q2
+info: no forward pass collective for layer: K2
+info: no forward pass collective for layer: V2
+info: no forward pass collective for layer: Q2K2
+info: no forward pass collective for layer: Softmax2
+info: all-reduce forward pass collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat2 is finished************
+info: no forward pass collective for layer: XW1+b12
+info: all-reduce forward pass collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b22 is finished************
+info: no input grad collective for layer: Layernorm2
+info: no weight grad collective for layer: Layernorm2
+info: all-reduce input grad collective issued for layer: XW2+b22, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: XW2+b22 is finished************
+info: all-reduce weight grad collective issued for layer: XW2+b22 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW2+b22 is finished************
+info: no input grad collective for layer: XW1+b12
+info: all-reduce weight grad collective issued for layer: XW1+b12 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW1+b12 is finished************
+info: all-gather input grad collective issued for layer: Concat2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Concat2 is finished************
+info: all-reduce weight grad collective issued for layer: Concat2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: Concat2 is finished************
+info: no input grad collective for layer: Softmax2
+info: no weight grad collective for layer: Softmax2
+info: no input grad collective for layer: Q2K2
+info: no weight grad collective for layer: Q2K2
+info: no input grad collective for layer: V2
+info: all-reduce weight grad collective issued for layer: V2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: V2 is finished************
+info: no input grad collective for layer: K2
+info: all-reduce weight grad collective issued for layer: K2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: K2 is finished************
+info: all-reduce input grad collective issued for layer: Q2, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Q2 is finished************
+info: all-reduce weight grad collective issued for layer: Q2 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info, initiating fwd_in_bkwd starting from layer:0 to layer: 8 ,at time: 100841924029856
+***** info: weight gradient collective for layer: Q2 is finished************
+info: no forward pass collective for layer: Q1
+info: no forward pass collective for layer: K1
+info: no forward pass collective for layer: V1
+info: no forward pass collective for layer: Q1K1
+info: no forward pass collective for layer: Softmax1
+info: all-reduce forward pass collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: Concat1 is finished************
+info: no forward pass collective for layer: XW1+b11
+info: all-reduce forward pass collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: XW2+b21 is finished************
+info: no input grad collective for layer: Layernorm1
+info: no weight grad collective for layer: Layernorm1
+info: all-reduce input grad collective issued for layer: XW2+b21, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: XW2+b21 is finished************
+info: all-reduce weight grad collective issued for layer: XW2+b21 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW2+b21 is finished************
+info: no input grad collective for layer: XW1+b11
+info: all-reduce weight grad collective issued for layer: XW1+b11 with size: 37748736, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: XW1+b11 is finished************
+info: all-gather input grad collective issued for layer: Concat1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Concat1 is finished************
+info: all-reduce weight grad collective issued for layer: Concat1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: Concat1 is finished************
+info: no input grad collective for layer: Softmax1
+info: no weight grad collective for layer: Softmax1
+info: no input grad collective for layer: Q1K1
+info: no weight grad collective for layer: Q1K1
+info: no input grad collective for layer: V1
+info: all-reduce weight grad collective issued for layer: V1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: V1 is finished************
+info: no input grad collective for layer: K1
+info: all-reduce weight grad collective issued for layer: K1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+***** info: weight gradient collective for layer: K1 is finished************
+info: all-reduce input grad collective issued for layer: Q1, involved dimensions:  1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: input gradient collective for layer: Q1 is finished************
+info: all-reduce weight grad collective issued for layer: Q1 with size: 9437184, involved dimensions:  0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+pass: 9 finished at time: 106146443488208
+***** info: weight gradient collective for layer: Q1 is finished************
+*******************
+Layer id: Q1
+Total collectives issued for this layer: 20
+*************************  Workload stats  ************************* Q1
+id: Q1 ,Total cycles spent on fwd pass compute: 197912100
+id: Q1 ,Total cycles spent on weight grad compute: 98956052480
+id: Q1 ,Total cycles spent on input grad compute: 98956052480
+id: Q1 ,Total cycles spent idle waiting for fwd finish: 0
+id: Q1 ,Total cycles spent idle waiting for weight grad finish: 12315610
+id: Q1 ,Total cycles spent idle waiting for input grad finish: 0
+id: Q1 ,Total cycles spent on fwd pass comm: 0
+id: Q1 ,Total cycles spent on weight grad comm: 12315620
+id: Q1 ,Total cycles spent on input grad comm: 750183140
+*************************  Queuing stats  ************************* Q1
+id: Q1 ,Average cycles spent on queuing for phase 0 of algorithm (per chunk): 0
+id: Q1 ,Average cycles spent on queuing for phase 1 of algorithm (per chunk): 9.5359e+06
+id: Q1 ,Average cycles spent on queuing for phase 2 of algorithm (per chunk): 3.68755e+06
+id: Q1 ,Average cycles spent on queuing for phase 3 of algorithm (per chunk): 1.43638e+07
+*************************  Network stats  ************************* Q1
+id: Q1 ,Average cycles spent on network for phase 1 of algorithm (per message): 74846.1
+id: Q1 ,Average cycles spent on network for phase 2 of algorithm (per message): 68360.2
+id: Q1 ,Average cycles spent on network for phase 3 of algorithm (per message): 73243.1
+*******************
+Layer id: K1
+Total collectives issued for this layer: 10
+*************************  Workload stats  ************************* K1
+id: K1 ,Total cycles spent on fwd pass compute: 197912100
+id: K1 ,Total cycles spent on weight grad compute: 98956052480
+id: K1 ,Total cycles spent on input grad compute: 98956052480
+id: K1 ,Total cycles spent idle waiting for fwd finish: 0
+id: K1 ,Total cycles spent idle waiting for weight grad finish: 0
+id: K1 ,Total cycles spent idle waiting for input grad finish: 0
+id: K1 ,Total cycles spent on fwd pass comm: 0
+id: K1 ,Total cycles spent on weight grad comm: 12315620
+id: K1 ,Total cycles spent on input grad comm: 0
+*************************  Queuing stats  ************************* K1
+id: K1 ,Average cycles spent on queuing for phase 0 of algorithm (per chunk): 0
+id: K1 ,Average cycles spent on queuing for phase 1 of algorithm (per chunk): 606154
+*************************  Network stats  ************************* K1
+id: K1 ,Average cycles spent on network for phase 1 of algorithm (per message): 3206
+*******************
+Layer id: V1
+Total collectives issued for this layer: 10
+*************************  Workload stats  ************************* V1
+id: V1 ,Total cycles spent on fwd pass compute: 197912100
+id: V1 ,Total cycles spent on weight grad compute: 98956052480
+id: V1 ,Total cycles spent on input grad compute: 98956052480
+id: V1 ,Total cycles spent idle waiting for fwd finish: 0
+id: V1 ,Total cycles spent idle waiting for weight grad finish: 0
+id: V1 ,Total cycles spent idle waiting for input grad finish: 0
+id: V1 ,Total cycles spent on fwd pass comm: 0
+id: V1 ,Total cycles spent on weight grad comm: 12315620
+id: V1 ,Total cycles spent on input grad comm: 0
+*************************  Queuing stats  ************************* V1
+id: V1 ,Average cycles spent on queuing for phase 0 of algorithm (per chunk): 0
+id: V1 ,Average cycles spent on queuing for phase 1 of algorithm (per chunk): 606154
+*************************  Network stats  ************************* V1
+id: V1 ,Average cycles spent on network for phase 1 of algorithm (per message): 3206
+*******************
+Layer id: Q1K1
+Total collectives issued for this layer: 0
+*************************  Workload stats  ************************* Q1K1
+id: Q1K1 ,Total cycles spent on fwd pass compute: 1030780
+id: Q1K1 ,Total cycles spent on weight grad compute: 515396080
+id: Q1K1 ,Total cycles spent on input grad compute: 515396080
+id: Q1K1 ,Total cycles spent idle waiting for fwd finish: 0
+id: Q1K1 ,Total cycles spent idle waiting for weight grad finish: 0
+id: Q1K1 ,Total cycles spent idle waiting for input grad finish: 0
+id: Q1K1 ,Total cycles spent on fwd pass comm: 0
+id: Q1K1 ,Total cycles spent on weight grad comm: 0
+id: Q1K1 ,Total cycles spent on input grad comm: 0
+*************************  Queuing stats  ************************* Q1K1
+*************************  Network stats  ************************* Q1K1
+*******************
+Layer id: Softmax1
+Total collectives issued for this layer: 0
+*************************  Workload stats  ************************* Softmax1
+id: Softmax1 ,Total cycles spent on fwd pass compute: 1030780
+id: Softmax1 ,Total cycles spent on weight grad compute: 515396080
+id: Softmax1 ,Total cycles spent on input grad compute: 515396080
+id: Softmax1 ,Total cycles spent idle waiting for fwd finish: 0
+id: Softmax1 ,Total cycles spent idle waiting for weight grad finish: 0
+id: Softmax1 ,Total cycles spent idle waiting for input grad finish: 0
+id: Softmax1 ,Total cycles spent on fwd pass comm: 0
+id: Softmax1 ,Total cycles spent on weight grad comm: 0
+id: Softmax1 ,Total cycles spent on input grad comm: 0
+*************************  Queuing stats  ************************* Softmax1
+*************************  Network stats  ************************* Softmax1
+*******************
+Layer id: Concat1
+Total collectives issued for this layer: 40
+*************************  Workload stats  ************************* Concat1
+id: Concat1 ,Total cycles spent on fwd pass compute: 197912100
+id: Concat1 ,Total cycles spent on weight grad compute: 98956052480
+id: Concat1 ,Total cycles spent on input grad compute: 98956052480
+id: Concat1 ,Total cycles spent idle waiting for fwd finish: 1500366280
+id: Concat1 ,Total cycles spent idle waiting for weight grad finish: 0
+id: Concat1 ,Total cycles spent idle waiting for input grad finish: 0
+id: Concat1 ,Total cycles spent on fwd pass comm: 1500366280
+id: Concat1 ,Total cycles spent on weight grad comm: 12315620
+id: Concat1 ,Total cycles spent on input grad comm: 379109750
+*************************  Queuing stats  ************************* Concat1
+id: Concat1 ,Average cycles spent on queuing for phase 0 of algorithm (per chunk): 0
+id: Concat1 ,Average cycles spent on queuing for phase 1 of algorithm (per chunk): 1.26144e+07
+id: Concat1 ,Average cycles spent on queuing for phase 2 of algorithm (per chunk): 5.07185e+06
+id: Concat1 ,Average cycles spent on queuing for phase 3 of algorithm (per chunk): 1.43638e+07
+*************************  Network stats  ************************* Concat1
+id: Concat1 ,Average cycles spent on network for phase 1 of algorithm (per message): 108225
+id: Concat1 ,Average cycles spent on network for phase 2 of algorithm (per message): 104982
+id: Concat1 ,Average cycles spent on network for phase 3 of algorithm (per message): 73243.1
+*******************
+Layer id: XW1+b11
+Total collectives issued for this layer: 10
+*************************  Workload stats  ************************* XW1+b11
+id: XW1+b11 ,Total cycles spent on fwd pass compute: 791648400
+id: XW1+b11 ,Total cycles spent on weight grad compute: 395824209920
+id: XW1+b11 ,Total cycles spent on input grad compute: 395824209920
+id: XW1+b11 ,Total cycles spent idle waiting for fwd finish: 0
+id: XW1+b11 ,Total cycles spent idle waiting for weight grad finish: 0
+id: XW1+b11 ,Total cycles spent idle waiting for input grad finish: 0
+id: XW1+b11 ,Total cycles spent on fwd pass comm: 0
+id: XW1+b11 ,Total cycles spent on weight grad comm: 49229540
+id: XW1+b11 ,Total cycles spent on input grad comm: 0
+*************************  Queuing stats  ************************* XW1+b11
+id: XW1+b11 ,Average cycles spent on queuing for phase 0 of algorithm (per chunk): 0
+id: XW1+b11 ,Average cycles spent on queuing for phase 1 of algorithm (per chunk): 2.42301e+06
+*************************  Network stats  ************************* XW1+b11
+id: XW1+b11 ,Average cycles spent on network for phase 1 of algorithm (per message): 12819
+*******************
+Layer id: XW2+b21
+Total collectives issued for this layer: 40
+*************************  Workload stats  ************************* XW2+b21
+id: XW2+b21 ,Total cycles spent on fwd pass compute: 791648400
+id: XW2+b21 ,Total cycles spent on weight grad compute: 395824209920
+id: XW2+b21 ,Total cycles spent on input grad compute: 395824209920
+id: XW2+b21 ,Total cycles spent idle waiting for fwd finish: 1500366280
+id: XW2+b21 ,Total cycles spent idle waiting for weight grad finish: 0
+id: XW2+b21 ,Total cycles spent idle waiting for input grad finish: 0
+id: XW2+b21 ,Total cycles spent on fwd pass comm: 1500366280
+id: XW2+b21 ,Total cycles spent on weight grad comm: 49229540
+id: XW2+b21 ,Total cycles spent on input grad comm: 750183140
+*************************  Queuing stats  ************************* XW2+b21
+id: XW2+b21 ,Average cycles spent on queuing for phase 0 of algorithm (per chunk): 0
+id: XW2+b21 ,Average cycles spent on queuing for phase 1 of algorithm (per chunk): 1.4455e+07
+id: XW2+b21 ,Average cycles spent on queuing for phase 2 of algorithm (per chunk): 5.53132e+06
+id: XW2+b21 ,Average cycles spent on queuing for phase 3 of algorithm (per chunk): 2.15457e+07
+*************************  Network stats  ************************* XW2+b21
+id: XW2+b21 ,Average cycles spent on network for phase 1 of algorithm (per message): 113069
+id: XW2+b21 ,Average cycles spent on network for phase 2 of algorithm (per message): 102540
+id: XW2+b21 ,Average cycles spent on network for phase 3 of algorithm (per message): 109865
+*******************
+Layer id: Layernorm1
+Total collectives issued for this layer: 0
+*************************  Workload stats  ************************* Layernorm1
+id: Layernorm1 ,Total cycles spent on fwd pass compute: 25332748800
+id: Layernorm1 ,Total cycles spent on weight grad compute: 25332749434880
+id: Layernorm1 ,Total cycles spent on input grad compute: 25332749434880
+id: Layernorm1 ,Total cycles spent idle waiting for fwd finish: 0
+id: Layernorm1 ,Total cycles spent idle waiting for weight grad finish: 0
+id: Layernorm1 ,Total cycles spent idle waiting for input grad finish: 0
+id: Layernorm1 ,Total cycles spent on fwd pass comm: 0
+id: Layernorm1 ,Total cycles spent on weight grad comm: 0
+id: Layernorm1 ,Total cycles spent on input grad comm: 0
+*************************  Queuing stats  ************************* Layernorm1
+*************************  Network stats  ************************* Layernorm1
+*******************
+Layer id: Q2
+Total collectives issued for this layer: 20
+*************************  Workload stats  ************************* Q2
+id: Q2 ,Total cycles spent on fwd pass compute: 197912100
+id: Q2 ,Total cycles spent on weight grad compute: 98956052480
+id: Q2 ,Total cycles spent on input grad compute: 98956052480
+id: Q2 ,Total cycles spent idle waiting for fwd finish: 0
+id: Q2 ,Total cycles spent idle waiting for weight grad finish: 0
+id: Q2 ,Total cycles spent idle waiting for input grad finish: 0
+id: Q2 ,Total cycles spent on fwd pass comm: 0
+id: Q2 ,Total cycles spent on weight grad comm: 12315620
+id: Q2 ,Total cycles spent on input grad comm: 750183140
+*************************  Queuing stats  ************************* Q2
+id: Q2 ,Average cycles spent on queuing for phase 0 of algorithm (per chunk): 0
+id: Q2 ,Average cycles spent on queuing for phase 1 of algorithm (per chunk): 9.5359e+06
+id: Q2 ,Average cycles spent on queuing for phase 2 of algorithm (per chunk): 3.68755e+06
+id: Q2 ,Average cycles spent on queuing for phase 3 of algorithm (per chunk): 1.43638e+07
+*************************  Network stats  ************************* Q2
+id: Q2 ,Average cycles spent on network for phase 1 of algorithm (per message): 74846.1
+id: Q2 ,Average cycles spent on network for phase 2 of algorithm (per message): 68360.2
+id: Q2 ,Average cycles spent on network for phase 3 of algorithm (per message): 73243.1
+*******************
+Layer id: K2
+Total collectives issued for this layer: 10
+*************************  Workload stats  ************************* K2
+id: K2 ,Total cycles spent on fwd pass compute: 197912100
+id: K2 ,Total cycles spent on weight grad compute: 98956052480
+id: K2 ,Total cycles spent on input grad compute: 98956052480
+id: K2 ,Total cycles spent idle waiting for fwd finish: 0
+id: K2 ,Total cycles spent idle waiting for weight grad finish: 0
+id: K2 ,Total cycles spent idle waiting for input grad finish: 0
+id: K2 ,Total cycles spent on fwd pass comm: 0
+id: K2 ,Total cycles spent on weight grad comm: 12315620
+id: K2 ,Total cycles spent on input grad comm: 0
+*************************  Queuing stats  ************************* K2
+id: K2 ,Average cycles spent on queuing for phase 0 of algorithm (per chunk): 0
+id: K2 ,Average cycles spent on queuing for phase 1 of algorithm (per chunk): 606154
+*************************  Network stats  ************************* K2
+id: K2 ,Average cycles spent on network for phase 1 of algorithm (per message): 3206
+*******************
+Layer id: V2
+Total collectives issued for this layer: 10
+*************************  Workload stats  ************************* V2
+id: V2 ,Total cycles spent on fwd pass compute: 197912100
+id: V2 ,Total cycles spent on weight grad compute: 98956052480
+id: V2 ,Total cycles spent on input grad compute: 98956052480
+id: V2 ,Total cycles spent idle waiting for fwd finish: 0
+id: V2 ,Total cycles spent idle waiting for weight grad finish: 0
+id: V2 ,Total cycles spent idle waiting for input grad finish: 0
+id: V2 ,Total cycles spent on fwd pass comm: 0
+id: V2 ,Total cycles spent on weight grad comm: 12315620
+id: V2 ,Total cycles spent on input grad comm: 0
+*************************  Queuing stats  ************************* V2
+id: V2 ,Average cycles spent on queuing for phase 0 of algorithm (per chunk): 0
+id: V2 ,Average cycles spent on queuing for phase 1 of algorithm (per chunk): 606154
+*************************  Network stats  ************************* V2
+id: V2 ,Average cycles spent on network for phase 1 of algorithm (per message): 3206
+*******************
+Layer id: Q2K2
+Total collectives issued for this layer: 0
+*************************  Workload stats  ************************* Q2K2
+id: Q2K2 ,Total cycles spent on fwd pass compute: 1030780
+id: Q2K2 ,Total cycles spent on weight grad compute: 515396080
+id: Q2K2 ,Total cycles spent on input grad compute: 515396080
+id: Q2K2 ,Total cycles spent idle waiting for fwd finish: 0
+id: Q2K2 ,Total cycles spent idle waiting for weight grad finish: 0
+id: Q2K2 ,Total cycles spent idle waiting for input grad finish: 0
+id: Q2K2 ,Total cycles spent on fwd pass comm: 0
+id: Q2K2 ,Total cycles spent on weight grad comm: 0
+id: Q2K2 ,Total cycles spent on input grad comm: 0
+*************************  Queuing stats  ************************* Q2K2
+*************************  Network stats  ************************* Q2K2
+*******************
+Layer id: Softmax2
+Total collectives issued for this layer: 0
+*************************  Workload stats  ************************* Softmax2
+id: Softmax2 ,Total cycles spent on fwd pass compute: 1030780
+id: Softmax2 ,Total cycles spent on weight grad compute: 515396080
+id: Softmax2 ,Total cycles spent on input grad compute: 515396080
+id: Softmax2 ,Total cycles spent idle waiting for fwd finish: 0
+id: Softmax2 ,Total cycles spent idle waiting for weight grad finish: 0
+id: Softmax2 ,Total cycles spent idle waiting for input grad finish: 0
+id: Softmax2 ,Total cycles spent on fwd pass comm: 0
+id: Softmax2 ,Total cycles spent on weight grad comm: 0
+id: Softmax2 ,Total cycles spent on input grad comm: 0
+*************************  Queuing stats  ************************* Softmax2
+*************************  Network stats  ************************* Softmax2
+*******************
+Layer id: Concat2
+Total collectives issued for this layer: 40
+*************************  Workload stats  ************************* Concat2
+id: Concat2 ,Total cycles spent on fwd pass compute: 197912100
+id: Concat2 ,Total cycles spent on weight grad compute: 98956052480
+id: Concat2 ,Total cycles spent on input grad compute: 98956052480
+id: Concat2 ,Total cycles spent idle waiting for fwd finish: 1500366280
+id: Concat2 ,Total cycles spent idle waiting for weight grad finish: 0
+id: Concat2 ,Total cycles spent idle waiting for input grad finish: 0
+id: Concat2 ,Total cycles spent on fwd pass comm: 1500366280
+id: Concat2 ,Total cycles spent on weight grad comm: 12315620
+id: Concat2 ,Total cycles spent on input grad comm: 379109750
+*************************  Queuing stats  ************************* Concat2
+id: Concat2 ,Average cycles spent on queuing for phase 0 of algorithm (per chunk): 0
+id: Concat2 ,Average cycles spent on queuing for phase 1 of algorithm (per chunk): 1.26144e+07
+id: Concat2 ,Average cycles spent on queuing for phase 2 of algorithm (per chunk): 5.07185e+06
+id: Concat2 ,Average cycles spent on queuing for phase 3 of algorithm (per chunk): 1.43638e+07
+*************************  Network stats  ************************* Concat2
+id: Concat2 ,Average cycles spent on network for phase 1 of algorithm (per message): 108225
+id: Concat2 ,Average cycles spent on network for phase 2 of algorithm (per message): 104982
+id: Concat2 ,Average cycles spent on network for phase 3 of algorithm (per message): 73243.1
+*******************
+Layer id: XW1+b12
+Total collectives issued for this layer: 10
+*************************  Workload stats  ************************* XW1+b12
+id: XW1+b12 ,Total cycles spent on fwd pass compute: 791648400
+id: XW1+b12 ,Total cycles spent on weight grad compute: 395824209920
+id: XW1+b12 ,Total cycles spent on input grad compute: 395824209920
+id: XW1+b12 ,Total cycles spent idle waiting for fwd finish: 0
+id: XW1+b12 ,Total cycles spent idle waiting for weight grad finish: 0
+id: XW1+b12 ,Total cycles spent idle waiting for input grad finish: 0
+id: XW1+b12 ,Total cycles spent on fwd pass comm: 0
+id: XW1+b12 ,Total cycles spent on weight grad comm: 49229540
+id: XW1+b12 ,Total cycles spent on input grad comm: 0
+*************************  Queuing stats  ************************* XW1+b12
+id: XW1+b12 ,Average cycles spent on queuing for phase 0 of algorithm (per chunk): 0
+id: XW1+b12 ,Average cycles spent on queuing for phase 1 of algorithm (per chunk): 2.42301e+06
+*************************  Network stats  ************************* XW1+b12
+id: XW1+b12 ,Average cycles spent on network for phase 1 of algorithm (per message): 12819
+*******************
+Layer id: XW2+b22
+Total collectives issued for this layer: 40
+*************************  Workload stats  ************************* XW2+b22
+id: XW2+b22 ,Total cycles spent on fwd pass compute: 791648400
+id: XW2+b22 ,Total cycles spent on weight grad compute: 395824209920
+id: XW2+b22 ,Total cycles spent on input grad compute: 395824209920
+id: XW2+b22 ,Total cycles spent idle waiting for fwd finish: 1500366280
+id: XW2+b22 ,Total cycles spent idle waiting for weight grad finish: 0
+id: XW2+b22 ,Total cycles spent idle waiting for input grad finish: 0
+id: XW2+b22 ,Total cycles spent on fwd pass comm: 1500366280
+id: XW2+b22 ,Total cycles spent on weight grad comm: 49229540
+id: XW2+b22 ,Total cycles spent on input grad comm: 750183140
+*************************  Queuing stats  ************************* XW2+b22
+id: XW2+b22 ,Average cycles spent on queuing for phase 0 of algorithm (per chunk): 0
+id: XW2+b22 ,Average cycles spent on queuing for phase 1 of algorithm (per chunk): 1.4455e+07
+id: XW2+b22 ,Average cycles spent on queuing for phase 2 of algorithm (per chunk): 5.53132e+06
+id: XW2+b22 ,Average cycles spent on queuing for phase 3 of algorithm (per chunk): 2.15457e+07
+*************************  Network stats  ************************* XW2+b22
+id: XW2+b22 ,Average cycles spent on network for phase 1 of algorithm (per message): 113069
+id: XW2+b22 ,Average cycles spent on network for phase 2 of algorithm (per message): 102540
+id: XW2+b22 ,Average cycles spent on network for phase 3 of algorithm (per message): 109865
+*******************
+Layer id: Layernorm2
+Total collectives issued for this layer: 0
+*************************  Workload stats  ************************* Layernorm2
+id: Layernorm2 ,Total cycles spent on fwd pass compute: 25332748800
+id: Layernorm2 ,Total cycles spent on weight grad compute: 25332749434880
+id: Layernorm2 ,Total cycles spent on input grad compute: 25332749434880
+id: Layernorm2 ,Total cycles spent idle waiting for fwd finish: 0
+id: Layernorm2 ,Total cycles spent idle waiting for weight grad finish: 0
+id: Layernorm2 ,Total cycles spent idle waiting for input grad finish: 0
+id: Layernorm2 ,Total cycles spent on fwd pass comm: 0
+id: Layernorm2 ,Total cycles spent on weight grad comm: 0
+id: Layernorm2 ,Total cycles spent on input grad comm: 0
+*************************  Queuing stats  ************************* Layernorm2
+*************************  Network stats  ************************* Layernorm2
+*************************  Chunk Stats Per Logical Dimension (for all layers) ************************* Layernorm2
+ ,Average chunk latency for logical dimension  1 of topology: 586070
+ ,Average chunk latency for logical dimension  2 of topology: 761744
+ ,Average chunk latency for logical dimension  3 of topology: 38469
+*************************
+all passes finished at time: 106146444719770, id of first layer: Q1
+./run_allreduce_analytical.sh: line 36:  5008 Segmentation fault      (core dumped) "${BINARY}" --network-configuration="${NETWORK}" --system-configuration="${SYSTEM}" --workload-configuration="${WORKLOAD}" --path="${STATS}/" --run-name="Transformer_HybridParallel" --num-passes=10 --total-stat-rows=1 --stat-row=0
+#--comm-scale=50 \
