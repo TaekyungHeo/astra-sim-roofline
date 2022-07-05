@@ -3,7 +3,7 @@
   "topologies-per-dim": ["Switch", "Switch"],
   "dimension-type": ["Package", "Pod"],
   "dimensions-count": 2,
-  "units-count": [16, 4],
+  "units-count": [16, 64],
   "links-count": [6, 1],
   "link-latency": [1, 1],
   "link-bandwidth": [25, 12.5],

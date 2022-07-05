@@ -1,0 +1,2 @@
+RunName,CommsTime,ComputeTime,ExposedCommsTime,Cost,TotalPayloadSize,DPCommsTime,MPCommsTime,PayloadSize_Dim0,PayloadSize_Dim1,PayloadSize_Dim2,PayloadSize_Dim3,PayloadSize_Dim4,PayloadSize_Dim5,PayloadSize_Dim6
+Transformer_HybridParallel,94809.517000,29686.815000,65122.702000,3621120.000000,12207.750000,0.000000,65122.702000,11520.000000,687.750000,-1,-1,-1,-1,-1
