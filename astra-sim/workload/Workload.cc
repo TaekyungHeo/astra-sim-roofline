@@ -1340,19 +1340,29 @@ bool Workload::initialize_workload(std::string name) {
         + generator->data_type_size*K*N
         + generator->data_type_size*M*N);
     oi = static_cast<double>(num_ops) / static_cast<double>(mat_size);
+
     if (generator->roofline_enabled) {
       if (loc == 0) { // local
           fp_compute_time_roofline =
-            static_cast<Tick>(
-                (static_cast<float>(num_ops)
-                 / static_cast<float>(generator->local_mem_roofline->get_perf(oi)))
-                * static_cast<float>(FREQ));
+            //static_cast<Tick>(
+            //    (static_cast<float>(num_ops)
+            //     / static_cast<float>(generator->local_mem_roofline->get_perf(oi)))
+            //    * static_cast<float>(FREQ));
+          static_cast<Tick>(
+                  (static_cast<float>(num_ops)
+                   / static_cast<float>(generator->local_mem_roofline->get_perf(oi))) );
       } else { // remote
         fp_compute_time_roofline =
           static_cast<Tick>(
               (static_cast<float>(num_ops)
-               / static_cast<float>(generator->remote_mem_roofline->get_perf(oi)))
-              * static_cast<float>(FREQ));
+               / static_cast<float>(generator->remote_mem_roofline->get_perf(oi))) );
+
+          /*
+          static_cast<Tick>(
+                  (static_cast<float>(num_ops)
+                   / static_cast<float>(generator->remote_mem_roofline->get_perf(oi)))
+                  * static_cast<float>(FREQ));
+          */
       }
     }
 
