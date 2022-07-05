@@ -839,6 +839,9 @@ void Workload::iterate_hybrid_parallel_Transformer() {
 void Workload::iterate_hybrid_parallel_Transformer_fwd_in_bckwd() {
   assert(index >= 0);
   assert(index < SIZE);
+  if (index >= SIZE) {
+    std::cout << "Assertion `index < SIZE' failed." << std::endl;
+  }
   check_for_sim_end();
   if (current_state == LoopState::Forward_Pass) {
     if (!layers[index]->is_weight_grad_comm_finished_blocking()) {
