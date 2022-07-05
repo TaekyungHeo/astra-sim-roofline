@@ -1506,28 +1506,49 @@ bool Workload::initialize_workload(std::string name) {
     } else {
       selected_involved_dimensions = general_involved_dimensions;
     }
-    Layer* l = new Layer(
-        id,
-        i,
-        generator,
-        this,
-        fp_compute_time * generator->compute_scale,
-        fp_compute_time_roofline * generator->compute_scale,
-        fp_type,
-        fp_comm_size * generator->comm_scale,
-        selected_involved_dimensions["fwd"],
-        ig_compute_time * generator->compute_scale,
-        ig_compute_time_roofline * generator->compute_scale,
-        ig_type,
-        ig_comm_size * generator->comm_scale,
-        selected_involved_dimensions["ig"],
-        wg_compute_time * generator->compute_scale,
-        wg_compute_time_roofline * generator->compute_scale,
-        wg_type,
-        wg_comm_size * generator->comm_scale,
-        selected_involved_dimensions["wg"],
-        wg_update_time,
-        specific_policy);
+
+    Layer* l;
+    if (!generator->roofline_enabled) {
+      l = new Layer(
+          id,
+          i,
+          generator,
+          this,
+          fp_compute_time * generator->compute_scale,
+          fp_type,
+          fp_comm_size * generator->comm_scale,
+          selected_involved_dimensions["fwd"],
+          ig_compute_time * generator->compute_scale,
+          ig_type,
+          ig_comm_size * generator->comm_scale,
+          selected_involved_dimensions["ig"],
+          wg_compute_time * generator->compute_scale,
+          wg_type,
+          wg_comm_size * generator->comm_scale,
+          selected_involved_dimensions["wg"],
+          wg_update_time,
+          specific_policy);
+    } else {
+      l = new Layer(
+          id,
+          i,
+          generator,
+          this,
+          fp_compute_time_roofline * generator->compute_scale,
+          fp_type,
+          fp_comm_size * generator->comm_scale,
+          selected_involved_dimensions["fwd"],
+          ig_compute_time_roofline * generator->compute_scale,
+          ig_type,
+          ig_comm_size * generator->comm_scale,
+          selected_involved_dimensions["ig"],
+          wg_compute_time_roofline * generator->compute_scale,
+          wg_type,
+          wg_comm_size * generator->comm_scale,
+          selected_involved_dimensions["wg"],
+          wg_update_time,
+          specific_policy);
+    }
     if (chekpoints.find(i) != chekpoints.end()) {
       l->is_checkpoint = true;
     }

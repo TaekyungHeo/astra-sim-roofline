@@ -13,17 +13,14 @@ Layer::Layer(
     Sys* generator,
     Workload* workload,
     Tick fwd_pass_compute_time,
-    Tick fwd_pass_compute_time_roofline,
     ComType fwd_pass_comm_type,
     uint64_t fwd_pass_comm_size,
     std::vector<bool> fwd_pass_comm_involved_dimensions,
     Tick input_grad_compute_time,
-    Tick input_grad_compute_time_roofline,
     ComType input_grad_comm_type,
     uint64_t input_grad_comm_size,
     std::vector<bool> input_grad_comm_involved_dimensions,
     Tick weight_grad_compute_time,
-    Tick weight_grad_compute_time_roofline,
     ComType weight_grad_comm_type,
     uint64_t weight_grad_comm_size,
     std::vector<bool> weight_grad_comm_involved_dimensions,
@@ -50,11 +47,8 @@ Layer::Layer(
   this->collective_counter = 0;
 
   this->weight_grad_update_time = weight_grad_update_time;
-  this->weight_grad_compute_time_roofline = weight_grad_compute_time_roofline;
   this->fwd_update_time = weight_grad_update_time;
-  this->fwd_pass_compute_time_roofline = fwd_pass_compute_time_roofline;
   this->input_grad_update_time = weight_grad_update_time;
-  this->input_grad_compute_time_roofline = input_grad_compute_time_roofline;
 
   // this->fwd_pass_dataset=NULL;
   //->input_grad_dataset=NULL;
@@ -230,31 +224,16 @@ void Layer::call(EventType event, CallData* mdata) {
 }
 
 Tick Layer::get_fwd_pass_compute() {
-  if (generator->roofline_enabled) {
-    total_forward_pass_compute += fwd_pass_compute_time_roofline;
-    return fwd_pass_compute_time_roofline;
-  } else {
-    total_forward_pass_compute += fwd_pass_compute_time;
-    return fwd_pass_compute_time;
-  }
+  total_forward_pass_compute += fwd_pass_compute_time;
+  return fwd_pass_compute_time;
 }
 Tick Layer::get_input_grad_compute() {
-  if (generator->roofline_enabled) {
-    total_input_grad_compute += input_grad_compute_time_roofline;
-    return input_grad_compute_time_roofline;
-  } else {
-    total_input_grad_compute += input_grad_compute_time;
-    return input_grad_compute_time;
-  }
+  total_input_grad_compute += input_grad_compute_time;
+  return input_grad_compute_time;
 }
 Tick Layer::get_weight_grad_compute() {
-  if (generator->roofline_enabled) {
-    total_weight_grad_compute += weight_grad_compute_time_roofline;
-    return weight_grad_compute_time_roofline;
-  } else {
-    total_weight_grad_compute += weight_grad_compute_time;
-    return weight_grad_compute_time;
-  }
+  total_weight_grad_compute += weight_grad_compute_time;
+  return weight_grad_compute_time;
 }
 void Layer::increment_waiting_for_wg() {
   total_waiting_for_wg_comm++;
