@@ -1344,10 +1344,6 @@ bool Workload::initialize_workload(std::string name) {
     if (generator->roofline_enabled) {
       if (loc == 0) { // local
           fp_compute_time_roofline =
-            //static_cast<Tick>(
-            //    (static_cast<float>(num_ops)
-            //     / static_cast<float>(generator->local_mem_roofline->get_perf(oi)))
-            //    * static_cast<float>(FREQ));
           static_cast<Tick>(
                   (static_cast<float>(num_ops)
                    / static_cast<float>(generator->local_mem_roofline->get_perf(oi))) );
@@ -1356,13 +1352,6 @@ bool Workload::initialize_workload(std::string name) {
           static_cast<Tick>(
               (static_cast<float>(num_ops)
                / static_cast<float>(generator->remote_mem_roofline->get_perf(oi))) );
-
-          /*
-          static_cast<Tick>(
-                  (static_cast<float>(num_ops)
-                   / static_cast<float>(generator->remote_mem_roofline->get_perf(oi)))
-                  * static_cast<float>(FREQ));
-          */
       }
     }
 
@@ -1390,14 +1379,12 @@ bool Workload::initialize_workload(std::string name) {
         ig_compute_time_roofline =
           static_cast<Tick>(
               (static_cast<float>(num_ops)
-               / static_cast<float>(generator->local_mem_roofline->get_perf(oi)))
-              * static_cast<float>(FREQ));
+               / static_cast<float>(generator->local_mem_roofline->get_perf(oi))));
       } else { // remote
         ig_compute_time_roofline =
           static_cast<Tick>(
               (static_cast<float>(num_ops)
-               / static_cast<float>(generator->remote_mem_roofline->get_perf(oi)))
-              * static_cast<float>(FREQ));
+               / static_cast<float>(generator->remote_mem_roofline->get_perf(oi))));
       }
     }
 
@@ -1425,14 +1412,12 @@ bool Workload::initialize_workload(std::string name) {
           wg_compute_time_roofline =
             static_cast<Tick>(
                 (static_cast<float>(num_ops)
-                 / static_cast<float>(generator->local_mem_roofline->get_perf(oi)))
-                * static_cast<float>(FREQ));
+                 / static_cast<float>(generator->local_mem_roofline->get_perf(oi))));
       } else { // remote
         wg_compute_time_roofline =
           static_cast<Tick>(
               (static_cast<float>(num_ops)
-               / static_cast<float>(generator->remote_mem_roofline->get_perf(oi)))
-              * static_cast<float>(FREQ));
+               / static_cast<float>(generator->remote_mem_roofline->get_perf(oi))));
       }
     }
 
