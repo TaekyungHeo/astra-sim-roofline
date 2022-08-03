@@ -86,6 +86,10 @@ class Layer : public Callable, public StreamStat {
   Tick total_waiting_for_ig_comm;
   Tick total_waiting_for_fwd_comm;
 
+  double fwd_oi;
+  double bwd_ig_oi;
+  double bwd_wg_oi;
+
   CollectiveBarrier fwd_barrier;
   CollectiveBarrier wg_barrier;
   CollectiveBarrier ig_barrier;
@@ -95,16 +99,19 @@ class Layer : public Callable, public StreamStat {
       int layer_num,
       Sys* generator,
       Workload* workload,
+      double fwd_oi,
       Tick fwd_pass_compute_time,
       Tick fwd_pass_compute_time_roofline,
       ComType fwd_pass_comm_type,
       uint64_t fwd_pass_comm_size,
       std::vector<bool> fwd_pass_comm_involved_dimensions,
+      double bwd_ig_oi,
       Tick input_grad_compute_time,
       Tick input_grad_compute_time_roofline,
       ComType input_grad_comm_type,
       uint64_t input_grad_comm_size,
       std::vector<bool> input_grad_comm_involved_dimensions,
+      double bwd_wg_oi,
       Tick weight_grad_compute_time,
       Tick weight_grad_compute_time_roofline,
       ComType weight_grad_comm_type,
@@ -132,6 +139,7 @@ class Layer : public Callable, public StreamStat {
       int stat_row,
       CSVWriter* detailed,
       CSVWriter* EndToEnd,
+      CSVWriter* oi_stats,
       double& total_compute,
       double& total_exposed,
       bool seprate_log);

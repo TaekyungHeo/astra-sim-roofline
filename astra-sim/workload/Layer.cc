@@ -12,16 +12,19 @@ Layer::Layer(
     int layer_num,
     Sys* generator,
     Workload* workload,
+    double fwd_oi,
     Tick fwd_pass_compute_time,
     Tick fwd_pass_compute_time_roofline,
     ComType fwd_pass_comm_type,
     uint64_t fwd_pass_comm_size,
     std::vector<bool> fwd_pass_comm_involved_dimensions,
+    double bwd_ig_oi,
     Tick input_grad_compute_time,
     Tick input_grad_compute_time_roofline,
     ComType input_grad_comm_type,
     uint64_t input_grad_comm_size,
     std::vector<bool> input_grad_comm_involved_dimensions,
+    double bwd_wg_oi,
     Tick weight_grad_compute_time,
     Tick weight_grad_compute_time_roofline,
     ComType weight_grad_comm_type,
@@ -65,6 +68,9 @@ Layer::Layer(
   this->total_waiting_for_wg_comm = 0;
   this->total_waiting_for_ig_comm = 0;
   this->total_waiting_for_fwd_comm = 0;
+  this->fwd_oi = fwd_oi;
+  this->bwd_ig_oi = bwd_ig_oi;
+  this->bwd_wg_oi = bwd_wg_oi;
   this->last_fwd_finished = 0;
   this->last_ig_finished = 0;
   this->last_wg_finished = 0;
@@ -329,6 +335,7 @@ LayerData Layer::report(
     int stat_row,
     CSVWriter* detailed,
     CSVWriter* EndToEnd,
+    CSVWriter* oi_stats,
     double& total_compute,
     double& total_exposed,
     bool seprate_log) {
@@ -366,9 +373,13 @@ LayerData Layer::report(
     if (stat_row == 0) {
       EndToEnd->write_cell(layer_num * total_rows + 1, 0, id);
       detailed->write_cell(layer_num * total_rows + 1, 0, id);
+      oi_stats->write_cell(layer_num * total_rows + 1, 0, id);
     }
     EndToEnd->write_cell(layer_num * total_rows + 1 + stat_row, 1, run_name);
     detailed->write_cell(layer_num * total_rows + 1 + stat_row, 1, run_name);
+    oi_stats->write_cell(layer_num * total_rows + 1, 1, std::to_string(fwd_oi));
+    oi_stats->write_cell(layer_num * total_rows + 1, 2, std::to_string(bwd_ig_oi));
+    oi_stats->write_cell(layer_num * total_rows + 1, 3, std::to_string(bwd_wg_oi));
 
     std::cout << "*************************  Workload stats  "
                  "************************* "
@@ -382,6 +393,10 @@ LayerData Layer::report(
     EndToEnd->write_cell(
         layer_num * total_rows + 1 + stat_row,
         2,
+        std::to_string(total_forward_pass_compute / FREQ));
+    oi_stats->write_cell(
+        layer_num * total_rows + 1 + stat_row,
+        4,
         std::to_string(total_forward_pass_compute / FREQ));
 
     std::cout << "id: " << id << " ,Total cycles spent on weight grad compute: "
@@ -583,6 +598,13 @@ LayerData Layer::report(
       }
     }
   }
+
+  oi_stats->write_cell(0, 0, "Layer Name");
+  oi_stats->write_cell(0, 1, "Operational Intensity (FWD)");
+  oi_stats->write_cell(0, 2, "Operational Intensity (BWD IG)");
+  oi_stats->write_cell(0, 3, "Operational Intensity (BWD WG)");
+  oi_stats->write_cell(0, 4, "FWD Compute Time");
+
   return layerData;
 }
 void Layer::issue_forward_pass_comm(
