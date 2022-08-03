@@ -18,6 +18,9 @@ Workload::~Workload() {
   if (dimension_utilization != nullptr) {
     delete dimension_utilization;
   }
+  if (oi_stats != nullptr) {
+    delete oi_stats;
+  }
   for (int i = 0; i < SIZE; i++) {
     delete layers[i];
   }
@@ -50,6 +53,7 @@ Workload::Workload(
   end_to_end = nullptr;
   detailed = nullptr;
   dimension_utilization = nullptr;
+  oi_stats = nullptr;
   this->path = path;
   this->stat_row = stat_row;
   this->seprate_log = seprate_log;
@@ -67,6 +71,7 @@ Workload::Workload(
     end_to_end = new CSVWriter(path, "EndToEnd.csv");
     dimension_utilization =
         new CSVWriter(path, run_name + "_dimension_utilization.csv");
+    oi_stats = new CSVWriter(path, "oi_stats.csv");
     if (stat_row == 0) {
       initialize_stat_files();
     }
@@ -77,6 +82,7 @@ Workload::Workload(
 void Workload::initialize_stat_files() {
   detailed->initialize_csv(SIZE * total_rows + 20, 50);
   end_to_end->initialize_csv(SIZE * total_rows + 20, 50);
+  oi_stats->initialize_csv(SIZE * total_rows + 20, 50);
 }
 void Workload::call(EventType event, CallData* data) {
   if (counter > 0) {
@@ -124,6 +130,7 @@ void Workload::report() {
         stat_row,
         detailed,
         end_to_end,
+        oi_stats,
         total_compute,
         total_exposed,
         this->seprate_log));
@@ -1331,6 +1338,7 @@ bool Workload::initialize_workload(std::string name) {
     int loc;
     uint64_t M, K, N, num_ops, mat_size;
     double oi;
+    double fwd_oi, bwd_ig_oi, bwd_wg_oi;
 
     Tick fp_compute_time_roofline;
     inFile >> loc;
@@ -1343,7 +1351,7 @@ bool Workload::initialize_workload(std::string name) {
         + generator->data_type_size*K*N
         + generator->data_type_size*M*N);
     oi = static_cast<double>(num_ops) / static_cast<double>(mat_size);
-
+    fwd_oi = oi;
     if (generator->roofline_enabled) {
       if (loc == 0) { // local
           fp_compute_time_roofline =
@@ -1377,6 +1385,7 @@ bool Workload::initialize_workload(std::string name) {
         + generator->data_type_size*K*N
         + generator->data_type_size*M*N);
     oi = static_cast<double>(num_ops) / static_cast<double>(mat_size);
+    bwd_ig_oi = oi;
     if (generator->roofline_enabled) {
       if (loc == 0) { // local
         ig_compute_time_roofline =
@@ -1410,6 +1419,7 @@ bool Workload::initialize_workload(std::string name) {
         + generator->data_type_size*K*N
         + generator->data_type_size*M*N);
     oi = static_cast<double>(num_ops) / static_cast<double>(mat_size);
+    bwd_wg_oi = oi;
     if (generator->roofline_enabled) {
       if (loc == 0) { // local
           wg_compute_time_roofline =
@@ -1502,14 +1512,17 @@ bool Workload::initialize_workload(std::string name) {
           i,
           generator,
           this,
+          fwd_oi,
           fp_compute_time * generator->compute_scale,
           fp_type,
           fp_comm_size * generator->comm_scale,
           selected_involved_dimensions["fwd"],
+          bwd_ig_oi,
           ig_compute_time * generator->compute_scale,
           ig_type,
           ig_comm_size * generator->comm_scale,
           selected_involved_dimensions["ig"],
+          bwd_wg_oi,
           wg_compute_time * generator->compute_scale,
           wg_type,
           wg_comm_size * generator->comm_scale,
@@ -1522,14 +1535,17 @@ bool Workload::initialize_workload(std::string name) {
           i,
           generator,
           this,
+          fwd_oi,
           fp_compute_time_roofline * generator->compute_scale,
           fp_type,
           fp_comm_size * generator->comm_scale,
           selected_involved_dimensions["fwd"],
+          bwd_ig_oi,
           ig_compute_time_roofline * generator->compute_scale,
           ig_type,
           ig_comm_size * generator->comm_scale,
           selected_involved_dimensions["ig"],
+          bwd_wg_oi,
           wg_compute_time_roofline * generator->compute_scale,
           wg_type,
           wg_comm_size * generator->comm_scale,

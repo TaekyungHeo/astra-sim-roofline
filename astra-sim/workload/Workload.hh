@@ -109,6 +109,7 @@ class Workload : Callable {
   CSVWriter* detailed;
   CSVWriter* end_to_end;
   CSVWriter* dimension_utilization;
+  CSVWriter* oi_stats;
   std::string path;
   std::string run_name;
   int stat_row;
