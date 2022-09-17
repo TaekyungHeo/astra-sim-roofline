@@ -10,10 +10,7 @@ all-to-all-implementation: direct_direct
 collective-optimization: localBWAware
 intra-dimension-scheduling: FIFO
 inter-dimension-scheduling: ascending
-local-mem-roofline-bw: 900
-local-mem-roofline-neg-y-intercept: 0.0
-local-mem-roofline-peak-perf: 125000
-remote-mem-roofline-bw: 100
-remote-mem-roofline-neg-y-intercept: 0.0
-remote-mem-roofline-peak-perf: 10000
-data-type-size: 2
+enable-roofline: false
+roofline-bw-in-bytes-per-ns: 900
+roofline-neg-y-intercept: 0.0
+roofline-peak-perf-in-gigaflops: 125000

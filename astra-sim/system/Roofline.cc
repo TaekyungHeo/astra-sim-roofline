@@ -29,6 +29,5 @@ void Roofline::set_peak_perf(double peak_perf) {
 }
 
 double Roofline::get_perf(double operational_intensity) {
-  return min((bandwidth * operational_intensity) - neg_y_intercept,
-             peak_perf);
+  return min((bandwidth * operational_intensity) - neg_y_intercept, peak_perf);
 }

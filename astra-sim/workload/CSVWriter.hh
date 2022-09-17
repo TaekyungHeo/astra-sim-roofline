@@ -29,8 +29,7 @@ class CSVWriter {
   void finalize_csv(std::list<std::list<std::pair<uint64_t, double>>> dims);
   CSVWriter(std::string path, std::string name);
   void write_cell(int row, int column, std::string data);
-  std::string path;
-  std::string name;
+
   ~CSVWriter() {
     if (myFile.is_open()) {
       myFile.close();
@@ -40,6 +39,11 @@ class CSVWriter {
     struct stat buffer;
     return (stat(name.c_str(), &buffer) == 0);
   }
+
+  // member variables.
+  std::string path;
+  std::string name;
+
 };
 } // namespace AstraSim
 #endif

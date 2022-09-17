@@ -24,8 +24,8 @@ LICENSE file in the root directory of this source tree.
 #include "CollectivePhase.hh"
 #include "Common.hh"
 #include "UsageTracker.hh"
-#include "astra-sim/system/topology/RingTopology.hh"
 #include "astra-sim/system/Roofline.hh"
+#include "astra-sim/system/topology/RingTopology.hh"
 #include "astra-sim/workload/Workload.hh"
 
 namespace AstraSim {
@@ -161,8 +161,7 @@ class Sys : public Callable {
   Tick last_scheduled_collective;
 
   bool roofline_enabled;
-  Roofline* local_mem_roofline;
-  Roofline* remote_mem_roofline;
+  Roofline* roofline = nullptr;
   uint64_t data_type_size;
 
   void register_for_finished_stream(Callable* callable);
@@ -217,7 +216,7 @@ class Sys : public Callable {
   void iterate();
   bool initialize_sys(std::string name);
   std::string trim(const std::string& str, const std::string& whitespace);
-  bool parse_var(std::string var, std::string value);
+  bool parse_var(std::string key, std::string value);
   bool post_process_inputs();
   std::vector<CollectiveImplementation*>
   generate_collective_implementation_from_input(std::string input);

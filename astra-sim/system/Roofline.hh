@@ -10,21 +10,20 @@ LICENSE file in the root directory of this source tree.
 
 namespace AstraSim {
 
-class Roofline
-{
-public:
+class Roofline {
+ public:
   Roofline();
   void set_bandwidth(double bandwidth);
   void set_neg_y_intercept(double neg_y_intercept);
   void set_peak_perf(double peak_perf);
   double get_perf(double operational_intensity);
 
-private:
+ private:
   double bandwidth;
   double neg_y_intercept;
   double peak_perf;
 };
 
-}
+} // namespace AstraSim
 
 #endif /* __ROOFLINE_HH__ */

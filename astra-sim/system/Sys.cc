@@ -163,8 +163,7 @@ Sys::Sys(
   this->rendezvous_enabled = rendezvous_enabled;
   this->data_type_size = 2;
   this->roofline_enabled = false;
-  this->local_mem_roofline = nullptr;
-  this->remote_mem_roofline = nullptr;
+  this->roofline = nullptr;
   if ((id + 1) > all_generators.size()) {
     all_generators.resize(id + 1);
   }
@@ -628,6 +627,8 @@ std::string Sys::trim(
 
   return str.substr(strBegin, strRange);
 }
+
+
 std::vector<CollectiveImplementation*> Sys::
     generate_collective_implementation_from_input(std::string input) {
   std::vector<std::string> inputs_per_dimension = split_string(input, "_");
@@ -672,152 +673,143 @@ std::vector<CollectiveImplementation*> Sys::
   }
   return result;
 }
-bool Sys::parse_var(std::string var, std::string value) {
-  var = trim(var);
-  value = trim(value);
-  if (id == 0) {
-    std::cout << "Var is: " << var << " ,val is: " << value << std::endl;
-  }
-  if (var == "scheduling-policy:") {
-    inp_scheduling_policy = value;
-  } else if (var == "all-reduce-implementation:") {
-    std::stringstream mval(value);
-    mval >> inp_all_reduce_implementation;
-  } else if (var == "reduce-scatter-implementation:") {
-    std::stringstream mval(value);
-    mval >> inp_reduce_scatter_implementation;
-  } else if (var == "all-gather-implementation:") {
-    std::stringstream mval(value);
-    mval >> inp_all_gather_implementation;
-  } else if (var == "all-to-all-implementation:") {
-    std::stringstream mval(value);
-    mval >> inp_all_to_all_implementation;
-  } else if (var == "collective-optimization:") {
-    std::stringstream mval(value);
-    mval >> inp_collective_optimization;
-  } else if (var == "endpoint-delay:") {
-    std::stringstream mval(value);
-    mval >> communication_delay;
-    communication_delay = communication_delay * injection_scale;
-  } else if (var == "local-reduction-delay:") {
-    std::stringstream mval(value);
-    mval >> local_reduction_delay;
-  } else if (var == "active-chunks-per-dimension:") {
-    std::stringstream mval(value);
-    mval >> active_chunks_per_dimension;
-  } else if (var == "L:") {
-    std::stringstream mval(value);
-    mval >> inp_L;
-  } else if (var == "o:") {
-    std::stringstream mval(value);
-    mval >> inp_o;
-  } else if (var == "g:") {
-    std::stringstream mval(value);
-    mval >> inp_g;
-  } else if (var == "G:") {
-    std::stringstream mval(value);
-    mval >> inp_G;
-  } else if (var == "model-shared-bus:") {
-    std::stringstream mval(value);
-    mval >> inp_model_shared_bus;
-  } else if (var == "preferred-dataset-splits:") {
-    std::stringstream mval(value);
-    mval >> preferred_dataset_splits;
-  } else if (var == "boost-mode:") {
-    std::stringstream mval(value);
-    mval >> inp_boost_mode;
-  } else if (var == "intra-dimension-scheduling:") {
-    std::stringstream mval(value);
-    std::string tmp;
-    mval >> tmp;
-    if (tmp == "FIFO") {
-      intra_dimension_scheduling = IntraDimensionScheduling::FIFO;
-    } else if (tmp == "RG") {
-      intra_dimension_scheduling = IntraDimensionScheduling::RG;
-    } else if (tmp == "smallestFirst") {
-      intra_dimension_scheduling = IntraDimensionScheduling::SmallestFirst;
-    } else if (tmp == "lessRemainingPhaseFirst") {
-      intra_dimension_scheduling =
-          IntraDimensionScheduling::LessRemainingPhaseFirst;
-    } else {
-      sys_panic(
-          "unknown value for intra-dimension-scheduling  in sys input file");
-    }
-  } else if (var == "inter-dimension-scheduling:") {
-    std::stringstream mval(value);
-    std::string tmp;
-    mval >> tmp;
-    if (tmp == "ascending") {
-      inter_dimension_scheduling = InterDimensionScheduling::Ascending;
-    } else if (tmp == "offlineGreedy") {
-      inter_dimension_scheduling = InterDimensionScheduling::OfflineGreedy;
-    } else if (tmp == "offlineGreedyFlex") {
-      inter_dimension_scheduling = InterDimensionScheduling::OfflineGreedyFlex;
-    } else if (tmp == "roundRobin") {
-      inter_dimension_scheduling = InterDimensionScheduling::RoundRobin;
-    } else {
-      sys_panic(
-          "unknown value for inter-dimension-scheduling  in sys input file");
-    }
-  } else if (var == "seprate-log:") {
-    std::stringstream mval(value);
-    int int_to_bool;
-    mval >> int_to_bool;
-    if (int_to_bool == 0) {
-      this->seprate_log = false;
-    } else {
-      this->seprate_log = true;
-    }
-  } else if (var == "local-mem-roofline-bw:") {
-    alloc_roofline_if_not_allocated();
-    std::stringstream mval(value);
-    double bw;
-    mval >> bw;
-    local_mem_roofline->set_bandwidth(bw);
-  } else if (var == "local-mem-roofline-neg-y-intercept:") {
-    alloc_roofline_if_not_allocated();
-    std::stringstream mval(value);
-    double neg_y_intercept;
-    mval >> neg_y_intercept;
-    local_mem_roofline->set_neg_y_intercept(neg_y_intercept);
 
-  } else if (var == "local-mem-roofline-peak-perf:") {
-    alloc_roofline_if_not_allocated();
-    std::stringstream mval(value);
-    double peak_perf;
-    mval >> peak_perf;
-    local_mem_roofline->set_peak_perf(peak_perf);
+// Function to parse the parameters and values from the system input file
+bool Sys::parse_var(std::string key, std::string value) {
+    key = trim(key);
+    value = trim(value);
 
-  } else if (var == "remote-mem-roofline-bw:") {
-    alloc_roofline_if_not_allocated();
-    std::stringstream mval(value);
-    double bw;
-    mval >> bw;
-    remote_mem_roofline->set_bandwidth(bw); // TODO: divide by # NPUs (shared)
-  } else if (var == "remote-mem-roofline-neg-y-intercept:") {
-    alloc_roofline_if_not_allocated();
-    std::stringstream mval(value);
-    double neg_y_intercept;
-    mval >> neg_y_intercept;
-    remote_mem_roofline->set_neg_y_intercept(neg_y_intercept);
-  } else if (var == "remote-mem-roofline-peak-perf:") {
-    alloc_roofline_if_not_allocated();
-    std::stringstream mval(value);
-    double peak_perf;
-    mval >> peak_perf;
-    remote_mem_roofline->set_peak_perf(peak_perf);
-  } else if (var == "data-type-size:") {
-    std::stringstream mval(value);
-    mval >> data_type_size;
-  } else if (var != "") {
-    std::cerr
-        << "######### Exiting because " << var
+    if (id == 0) {
+        std::cout << "Var is: " << key << " ,val is: " << value << std::endl;
+    }
+
+    if (key == "scheduling-policy:") {
+        inp_scheduling_policy = value;
+    } else if (key == "all-reduce-implementation:") {
+        std::stringstream mval(value);
+        mval >> inp_all_reduce_implementation;
+    } else if (key == "reduce-scatter-implementation:") {
+        std::stringstream mval(value);
+        mval >> inp_reduce_scatter_implementation;
+    } else if (key == "all-gather-implementation:") {
+        std::stringstream mval(value);
+        mval >> inp_all_gather_implementation;
+    } else if (key == "all-to-all-implementation:") {
+        std::stringstream mval(value);
+        mval >> inp_all_to_all_implementation;
+    } else if (key == "collective-optimization:") {
+        std::stringstream mval(value);
+        mval >> inp_collective_optimization;
+    } else if (key == "endpoint-delay:") {
+        std::stringstream mval(value);
+        mval >> communication_delay;
+        communication_delay = communication_delay * injection_scale;
+    } else if (key == "local-reduction-delay:") {
+        std::stringstream mval(value);
+        mval >> local_reduction_delay;
+    } else if (key == "active-chunks-per-dimension:") {
+        std::stringstream mval(value);
+        mval >> active_chunks_per_dimension;
+    } else if (key == "L:") {
+        std::stringstream mval(value);
+        mval >> inp_L;
+    } else if (key == "o:") {
+        std::stringstream mval(value);
+        mval >> inp_o;
+    } else if (key == "g:") {
+        std::stringstream mval(value);
+        mval >> inp_g;
+    } else if (key == "G:") {
+        std::stringstream mval(value);
+        mval >> inp_G;
+    } else if (key == "model-shared-bus:") {
+        std::stringstream mval(value);
+        mval >> inp_model_shared_bus;
+    } else if (key == "preferred-dataset-splits:") {
+        std::stringstream mval(value);
+        mval >> preferred_dataset_splits;
+    } else if (key == "boost-mode:") {
+        std::stringstream mval(value);
+        mval >> inp_boost_mode;
+    } else if (key == "intra-dimension-scheduling:") {
+        std::stringstream mval(value);
+        std::string tmp;
+        mval >> tmp;
+        if (tmp == "FIFO") {
+            intra_dimension_scheduling = IntraDimensionScheduling::FIFO;
+        } else if (tmp == "RG") {
+            intra_dimension_scheduling = IntraDimensionScheduling::RG;
+        } else if (tmp == "smallestFirst") {
+            intra_dimension_scheduling = IntraDimensionScheduling::SmallestFirst;
+        } else if (tmp == "lessRemainingPhaseFirst") {
+            intra_dimension_scheduling =
+                    IntraDimensionScheduling::LessRemainingPhaseFirst;
+        } else {
+            sys_panic("unknown value for intra-dimension-scheduling  in sys input file");
+        }
+    } else if (key == "inter-dimension-scheduling:") {
+        std::stringstream mval(value);
+        std::string tmp;
+        mval >> tmp;
+        if (tmp == "ascending") {
+            inter_dimension_scheduling = InterDimensionScheduling::Ascending;
+        } else if (tmp == "offlineGreedy") {
+            inter_dimension_scheduling = InterDimensionScheduling::OfflineGreedy;
+        } else if (tmp == "offlineGreedyFlex") {
+            inter_dimension_scheduling = InterDimensionScheduling::OfflineGreedyFlex;
+        } else if (tmp == "roundRobin") {
+            inter_dimension_scheduling = InterDimensionScheduling::RoundRobin;
+        } else {
+            sys_panic("unknown value for inter-dimension-scheduling  in sys input file");
+        }
+    } else if (key == "seprate-log:") {
+        std::stringstream mval(value);
+        int int_to_bool;
+        mval >> int_to_bool;
+        if (int_to_bool == 0) {
+            this->seprate_log = false;
+        } else {
+            this->seprate_log = true;
+        }
+    } else if(key == "enable-roofline:") {
+        std::stringstream mval(value);
+        std::string tmp;
+        mval >> tmp;
+        if(tmp == "true"){
+            roofline_enabled = true;
+        } else{
+            roofline_enabled = false;
+        }
+    } else if (key == "roofline-bw-in-bytes-per-ns:") {
+        alloc_roofline_if_not_allocated();
+        std::stringstream mval(value);
+        double bw;
+        mval >> bw;
+        roofline->set_bandwidth(bw);
+    } else if (key == "roofline-neg-y-intercept:") {
+        alloc_roofline_if_not_allocated();
+        std::stringstream mval(value);
+        double neg_y_intercept;
+        mval >> neg_y_intercept;
+        roofline->set_neg_y_intercept(neg_y_intercept);
+    } else if (key == "roofline-peak-perf-in-gigaflops:") {
+        alloc_roofline_if_not_allocated();
+        std::stringstream mval(value);
+        double peak_perf;
+        mval >> peak_perf;
+        roofline->set_peak_perf(peak_perf);
+    } else if (key != "") {
+        std::cerr << "######### Exiting because " << key
         << " is an unknown variable. Check your system input file. #########"
         << std::endl;
-    exit(1);
-  }
-  return true;
-}
+        exit(1);
+    }
+
+    return true;
+} // End of Sys::parse_var
+
+
+
 bool Sys::post_process_inputs() {
   all_reduce_implementation_per_dimension =
       generate_collective_implementation_from_input(
@@ -871,6 +863,8 @@ bool Sys::post_process_inputs() {
   }
   return true;
 }
+
+
 bool Sys::initialize_sys(std::string name) {
   std::ifstream inFile;
   inFile.open(name);
@@ -1811,20 +1805,16 @@ timespec_t Sys::generate_time(Tick cycles) {
   tmp.time_val = addition;
   return tmp;
 }
+
 void Sys::alloc_roofline_if_not_allocated() {
-  roofline_enabled = true;
-  if (local_mem_roofline == nullptr) {
-    local_mem_roofline = new Roofline;
-  }
-  if (remote_mem_roofline == nullptr) {
-    remote_mem_roofline = new Roofline;
-  }
+    if(roofline == nullptr) {
+        roofline = new Roofline;
+    }
 }
+
 void Sys::dealloc_roofline() {
-  if (roofline_enabled) {
-    delete local_mem_roofline;
-    delete remote_mem_roofline;
-    roofline_enabled = false;
-  }
+    if (roofline != nullptr) {
+        delete roofline;
+    }
 }
 } // namespace AstraSim

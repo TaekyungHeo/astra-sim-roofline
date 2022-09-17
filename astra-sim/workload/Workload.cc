@@ -142,7 +142,7 @@ void Workload::report() {
   generator->NI->pass_front_end_report(astraSimDataAPI);
 
   if (this->seprate_log) {
-    std::list<std::list<std::pair<uint64_t, double>>> dims;
+    std::list< std::list< std::pair<uint64_t, double> > > dims;
     for (int i = 0; i < generator->scheduler_unit->usage.size(); i++) {
       dims.push_back(
           generator->scheduler_unit->usage[i].report_percentage(10000));
@@ -827,7 +827,7 @@ void Workload::iterate_hybrid_parallel_Transformer() {
       collective_issued = true;
       layers[index]->issue_input_grad_comm(
           SchedulingPolicy::LIFO, CollectiveBarrier::Non_Blocking);
-      //return;
+      // return;
     }
     collective_issued = false;
     delay_loaded = false;
@@ -953,7 +953,7 @@ void Workload::iterate_hybrid_parallel_Transformer_fwd_in_bckwd() {
       collective_issued = true;
       layers[index]->issue_input_grad_comm(
           SchedulingPolicy::LIFO, CollectiveBarrier::Non_Blocking);
-      //return;
+      // return;
     }
     checkpoint_initiated = false;
     collective_issued = false;
@@ -1233,328 +1233,350 @@ std::map<std::string, std::vector<bool>> Workload::decode_involved_dimensions(
   }
   return result;
 }
+
+// This function reads the input workload file and initialize the layer
+// Find the checkpoints, layer details provided in the input file.
 bool Workload::initialize_workload(std::string name) {
-  std::map<int, bool> chekpoints;
-  std::map<int, bool> need_checkpoint_initiation;
-  std::ifstream inFile;
-  inFile.open(name);
-  if (!inFile) {
-    std::cerr << "Unable to open file: " << name << std::endl;
-    std::cerr << "######### Exiting because unable to open the workload input "
-                 "file #########"
-              << std::endl;
-    std::cerr << "This error is fatal. Please check your path and filename."
-              << std::endl;
-    exit(1);
-  } else {
-    if (generator->id == 0) {
-      std::cout << "Success in opening workload file" << std::endl;
-    }
-  }
-  std::string type;
-  int lines;
-  inFile >> type;
-  parallelismPolicy = decode_parallelsim(type);
-  int model_parallel_npu_group = -1;
-  if (parallelismPolicy == ParallelismPolicy::TransformerFwdInBckwd ||
-      parallelismPolicy == ParallelismPolicy::Transformer) {
-    std::string tmp;
-    int i;
-    inFile >> tmp;
-    inFile >> model_parallel_npu_group;
-    if (generator->id == 0) {
-      std::cout << tmp << " is: " << model_parallel_npu_group << std::endl;
-    }
-    if (parallelismPolicy == ParallelismPolicy::TransformerFwdInBckwd) {
-      inFile >> tmp;
-      inFile >> i;
-      if (generator->id == 0) {
-        std::cout << "checkpoints layers are: ";
-      }
-      while (i-- > 0) {
-        int layer;
-        inFile >> layer;
-        chekpoints[layer] = true;
-        if (generator->id == 0) {
-          std::cout << layer << ", ";
-        }
-      }
-      if (generator->id == 0) {
-        std::cout << std::endl;
-        std::cout << "layers initiating fwd_in_bckwd are: ";
-      }
-      inFile >> tmp;
-      inFile >> i;
-      while (i-- > 0) {
-        int layer;
-        inFile >> layer;
-        need_checkpoint_initiation[layer] = true;
-        if (generator->id == 0) {
-          std::cout << layer << ", ";
-        }
-      }
-      if (generator->id == 0) {
-        std::cout << std::endl;
-      }
-    }
-  } else if (
-      parallelismPolicy == ParallelismPolicy::DLRM ||
-      parallelismPolicy == ParallelismPolicy::DLRMEnhanced) {
-    inFile >> DLRM_LAST_BOTTOM_LAYER;
-    if (generator->id == 0) {
-      std::cout
-          << "****************** info: DLRM workload last bottom layer is: "
-          << DLRM_LAST_BOTTOM_LAYER << std::endl;
-    }
-  } else if (parallelismPolicy == ParallelismPolicy::None) {
-    std::cerr << "######### Exiting because unable to decode the workload "
-                 "parallelization strategy #########"
-              << std::endl;
-    inFile.close();
-    exit(1);
-  }
-  std::map<std::string, std::vector<bool>> general_involved_dimensions =
-      decode_involved_dimensions(parallelismPolicy, model_parallel_npu_group);
-  inFile >> lines;
-  run_type = type;
-  SIZE = lines;
-  layers = new Layer*[SIZE];
-  for (int i = 0; i < lines; i++) {
-    std::string id;
-    inFile >> id;
-    int depen;
-    inFile >> depen;
 
-    Tick fp_compute_time;
-    inFile >> fp_compute_time;
+    // Map to store layer indices with checkpoints and
+    // Map to store layer that need check-point initiation during Back-pass.
+    std::map<int, bool> chekpoints;
+    std::map<int, bool> need_checkpoint_initiation;
 
-    int loc;
-    uint64_t M, K, N, num_ops, mat_size;
-    double oi;
-
-    Tick fp_compute_time_roofline;
-    inFile >> loc;
-    inFile >> M;
-    inFile >> K;
-    inFile >> N;
-    num_ops = 2*M*K*N;
-    mat_size =
-      (generator->data_type_size*M*K
-        + generator->data_type_size*K*N
-        + generator->data_type_size*M*N);
-    oi = static_cast<double>(num_ops) / static_cast<double>(mat_size);
-
-    if (generator->roofline_enabled) {
-      if (loc == 0) { // local
-          fp_compute_time_roofline =
-          static_cast<Tick>(
-                  (static_cast<float>(num_ops)
-                   / static_cast<float>(generator->local_mem_roofline->get_perf(oi))) );
-      } else { // remote
-        fp_compute_time_roofline =
-          static_cast<Tick>(
-              (static_cast<float>(num_ops)
-               / static_cast<float>(generator->remote_mem_roofline->get_perf(oi))) );
-      }
-    }
-
-    std::string fp_comm_type_s;
-    inFile >> fp_comm_type_s;
-    uint64_t fp_comm_size;
-    inFile >> fp_comm_size;
-
-    Tick ig_compute_time;
-    inFile >> ig_compute_time;
-
-    Tick ig_compute_time_roofline;
-    inFile >> loc;
-    inFile >> M;
-    inFile >> K;
-    inFile >> N;
-    num_ops = 2*M*K*N;
-    mat_size =
-      (generator->data_type_size*M*K
-        + generator->data_type_size*K*N
-        + generator->data_type_size*M*N);
-    oi = static_cast<double>(num_ops) / static_cast<double>(mat_size);
-    if (generator->roofline_enabled) {
-      if (loc == 0) { // local
-        ig_compute_time_roofline =
-          static_cast<Tick>(
-              (static_cast<float>(num_ops)
-               / static_cast<float>(generator->local_mem_roofline->get_perf(oi))));
-      } else { // remote
-        ig_compute_time_roofline =
-          static_cast<Tick>(
-              (static_cast<float>(num_ops)
-               / static_cast<float>(generator->remote_mem_roofline->get_perf(oi))));
-      }
-    }
-
-    std::string ig_comm_type_s;
-    inFile >> ig_comm_type_s;
-    uint64_t ig_comm_size;
-    inFile >> ig_comm_size;
-
-    Tick wg_compute_time;
-    inFile >> wg_compute_time;
-
-    Tick wg_compute_time_roofline;
-    inFile >> loc;
-    inFile >> M;
-    inFile >> K;
-    inFile >> N;
-    num_ops = 2*M*K*N;
-    mat_size =
-      (generator->data_type_size*M*K
-        + generator->data_type_size*K*N
-        + generator->data_type_size*M*N);
-    oi = static_cast<double>(num_ops) / static_cast<double>(mat_size);
-    if (generator->roofline_enabled) {
-      if (loc == 0) { // local
-          wg_compute_time_roofline =
-            static_cast<Tick>(
-                (static_cast<float>(num_ops)
-                 / static_cast<float>(generator->local_mem_roofline->get_perf(oi))));
-      } else { // remote
-        wg_compute_time_roofline =
-          static_cast<Tick>(
-              (static_cast<float>(num_ops)
-               / static_cast<float>(generator->remote_mem_roofline->get_perf(oi))));
-      }
-    }
-
-    std::string wg_comm_type_s;
-    inFile >> wg_comm_type_s;
-    uint64_t wg_comm_size;
-    inFile >> wg_comm_size;
-    // wg_comm_size=2048;
-    Tick wg_update_time;
-    inFile >> wg_update_time;
-
-    ParallelismPolicy specific_policy = ParallelismPolicy::None;
-    std::map<std::string, std::vector<bool>> selected_involved_dimensions;
-    ComType fp_type = ComType::None;
-    ComType ig_type = ComType::None;
-    ComType wg_type = ComType::None;
-
-    if (wg_comm_type_s == "ALLREDUCE") {
-      wg_type = ComType::All_Reduce;
-    } else if (wg_comm_type_s == "ALLTOALL") {
-      wg_type = ComType::All_to_All;
-    } else if (wg_comm_type_s == "ALLREDUCEALLTOALL") {
-      wg_type = ComType::All_Reduce_All_to_All;
-    } else if (wg_comm_type_s == "ALLGATHER") {
-      wg_type = ComType::All_Gatehr;
-    } else if (wg_comm_type_s == "REDUCESCATTER") {
-      wg_type = ComType::Reduce_Scatter;
-    }
-
-    if (ig_comm_type_s == "ALLREDUCE") {
-      ig_type = ComType::All_Reduce;
-    } else if (ig_comm_type_s == "ALLTOALL") {
-      ig_type = ComType::All_to_All;
-    } else if (ig_comm_type_s == "ALLREDUCEALLTOALL") {
-      ig_type = ComType::All_Reduce_All_to_All;
-    } else if (ig_comm_type_s == "ALLGATHER") {
-      ig_type = ComType::All_Gatehr;
-    } else if (ig_comm_type_s == "REDUCESCATTER") {
-      ig_type = ComType::Reduce_Scatter;
-    }
-
-    if (fp_comm_type_s == "ALLREDUCE") {
-      fp_type = ComType::All_Reduce;
-    } else if (fp_comm_type_s == "ALLTOALL") {
-      fp_type = ComType::All_to_All;
-    } else if (fp_comm_type_s == "ALLREDUCEALLTOALL") {
-      fp_type = ComType::All_Reduce_All_to_All;
-    } else if (fp_comm_type_s == "ALLGATHER") {
-      fp_type = ComType::All_Gatehr;
-    } else if (fp_comm_type_s == "REDUCESCATTER") {
-      fp_type = ComType::Reduce_Scatter;
-    }
-
-    if (generator->id == 0) {
-      std::cout << "id: " << id << " , depen: " << depen
-                << " , wg_comp_time: " << wg_compute_time << std::endl;
-    }
-    if (parallelismPolicy == ParallelismPolicy::HybridCustomized) {
-      std::string specific_parallelsim;
-      inFile >> specific_parallelsim;
-      specific_policy = decode_parallelsim(specific_parallelsim);
-    }
-    if ((parallelismPolicy == ParallelismPolicy::DLRM ||
-         parallelismPolicy == ParallelismPolicy::DLRMEnhanced) &&
-        i == 0) {
-      specific_policy = ParallelismPolicy::All;
-    }
-    if (specific_policy != ParallelismPolicy::None) {
-      selected_involved_dimensions =
-          decode_involved_dimensions(specific_policy, model_parallel_npu_group);
+    ////--- Step -1. Check if the input file can be opened to read or not! --- ////
+    std::ifstream inFile;  // input file handle
+    inFile.open(name); // Open the input workload file to read.
+    if (!inFile) {
+        std::cerr << "Unable to open file: " << name << std::endl;
+        std::cerr << "######### Exiting because unable to open the workload input "
+                     "file #########"
+                     << std::endl;
+        std::cerr << "This error is fatal. Please check your path and filename."
+        << std::endl;
+        exit(1);
     } else {
-      selected_involved_dimensions = general_involved_dimensions;
+        if (generator->id == 0) {
+            std::cout << "Success in opening workload file" << std::endl;
+        }
     }
 
-    Layer* l;
-    if (!generator->roofline_enabled) {
-      l = new Layer(
-          id,
-          i,
-          generator,
-          this,
-          fp_compute_time * generator->compute_scale,
-          fp_type,
-          fp_comm_size * generator->comm_scale,
-          selected_involved_dimensions["fwd"],
-          ig_compute_time * generator->compute_scale,
-          ig_type,
-          ig_comm_size * generator->comm_scale,
-          selected_involved_dimensions["ig"],
-          wg_compute_time * generator->compute_scale,
-          wg_type,
-          wg_comm_size * generator->comm_scale,
-          selected_involved_dimensions["wg"],
-          wg_update_time,
-          specific_policy);
-    } else {
-      l = new Layer(
-          id,
-          i,
-          generator,
-          this,
-          fp_compute_time_roofline * generator->compute_scale,
-          fp_type,
-          fp_comm_size * generator->comm_scale,
-          selected_involved_dimensions["fwd"],
-          ig_compute_time_roofline * generator->compute_scale,
-          ig_type,
-          ig_comm_size * generator->comm_scale,
-          selected_involved_dimensions["ig"],
-          wg_compute_time_roofline * generator->compute_scale,
-          wg_type,
-          wg_comm_size * generator->comm_scale,
-          selected_involved_dimensions["wg"],
-          wg_update_time,
-          specific_policy);
+    //// --- Step-2. Parse the workload input file headers --- ////
+    // Store the Parallism Policy in a variable
+    std::string type;
+    int lines;
+    inFile >> type;
+
+    // Based on type of parallelism type, parse the data.
+    parallelismPolicy = decode_parallelsim(type);
+    int model_parallel_npu_group = -1; // Store the number of model-parallel-npus in a group.
+
+    // If the parallism Policy is for Transformer class:
+    if (parallelismPolicy == ParallelismPolicy::TransformerFwdInBckwd ||
+        parallelismPolicy == ParallelismPolicy::Transformer) {
+
+        // Parse the number of model-parallel-npus in a group
+        std::string tmp;
+        int i;
+        inFile >> tmp;
+        inFile >> model_parallel_npu_group;
+
+        if (generator->id == 0) {
+            // Display the number of model-parallel NPUs in a group.
+            std::cout << tmp << " is: " << model_parallel_npu_group << std::endl;
+        }
+
+        // If specifically for TransformerFwdInBckwd:
+        if (parallelismPolicy == ParallelismPolicy::TransformerFwdInBckwd) {
+            // Parse the checkpoint layers and store the
+            // layer indices in chekpoints[layer] array.
+            // Format:
+            //         #num_checkpoints, layer_index0, layer_index1,..., layer_indexn
+
+            inFile >> tmp;
+            inFile >> i;
+            if (generator->id == 0) {
+                std::cout << "checkpoints layers are: ";
+            }
+            while (i-- > 0) {
+                int layer;
+                inFile >> layer;
+                chekpoints[layer] = true;
+
+                if (generator->id == 0) {
+                    std::cout << layer << ", ";
+                }
+            }
+
+            // Similarly parse the layers that needs to initiate the checkpoints
+            // to re-compute the activations during backward propagation.
+            if (generator->id == 0) {
+                std::cout << std::endl;
+                std::cout << "layers initiating fwd_in_bckwd are: ";
+            }
+            // Parse the checkpoint initiation layers and store them in an array
+            // Format:
+            //         #num_checkpoint_initiation, layer_index0, layer_index1,..., layer_indexn
+            inFile >> tmp;
+            inFile >> i;
+            while (i-- > 0) {
+                int layer;
+                inFile >> layer;
+                need_checkpoint_initiation[layer] = true;
+                if (generator->id == 0) {
+                    std::cout << layer << ", ";
+                }
+            }
+            if (generator->id == 0) {
+                std::cout << std::endl;
+            }
+
+        } else {
+            std::cout << "Write the logic for Parallelism Policy::Transformer"<<std::endl;
+        }
+
+    } else if (  // Logic to parse the input workload file for DLRM.
+        parallelismPolicy == ParallelismPolicy::DLRM ||
+        parallelismPolicy == ParallelismPolicy::DLRMEnhanced) {
+
+        inFile >> DLRM_LAST_BOTTOM_LAYER;
+        if (generator->id == 0) {
+            std::cout
+            << "****************** info: DLRM workload last bottom layer is: "
+            << DLRM_LAST_BOTTOM_LAYER << std::endl;
+        }
+
+    } else if (parallelismPolicy == ParallelismPolicy::None) {
+        std::cerr << "######### Exiting because unable to decode the workload "
+                     "parallelization strategy #########"
+                     << std::endl;
+        inFile.close();
+        exit(1);
     }
-    if (chekpoints.find(i) != chekpoints.end()) {
-      l->is_checkpoint = true;
-    }
-    if (need_checkpoint_initiation.find(i) !=
-        need_checkpoint_initiation.end()) {
-      l->needs_fwd_in_bckwd_initiation = true;
-    }
-    layers[i] = l;
-  }
-  if (generator->id == 0) {
-    std::cout << "type: " << type << " ,num passes: " << TOTAL_PASS
+
+    // Identify the dimensions based on parallelism and number of MP NPUs.
+    // Mark the active involved dimensions.
+    std::map<std::string, std::vector<bool>> general_involved_dimensions =
+            decode_involved_dimensions(parallelismPolicy, model_parallel_npu_group);
+
+    //// --- Step 3. Parse each Layer's information and create a Layer object --- ////
+    // Store all the Layer objects for this workload into an array of
+    // Layer objects.
+    inFile >> lines;
+    run_type = type; // Parallelism type
+    SIZE = lines;    // Number of layers described in workload input file.
+    layers = new Layer*[SIZE]; // array of layer objects.
+
+    // Parse each layer description in the workload file one-by-one.
+    for (int i = 0; i < lines; i++) {
+        // Parse the layer-name or ID.
+        std::string id;
+        inFile >> id;
+
+        // Parse the reserved variable.
+        int depen;
+        inFile >> depen;
+
+
+        // Parse total operations and data_movement(Bytes) for this layer
+        Tick total_FP_ops;
+        Tick total_data_movmnt;
+
+        inFile >> total_FP_ops;
+        inFile >> total_data_movmnt;
+
+        // Compute the operational Intensity of this layer.
+        double oi =
+                static_cast<double>(total_FP_ops) /
+                static_cast<double>(total_data_movmnt);
+
+        // Calculate the roofline compute time if roofline is enabled.
+        Tick roofline_compute_time;
+        if (generator->roofline_enabled) {
+            roofline_compute_time =
+                    static_cast<Tick>( (static_cast<double>(total_FP_ops) /
+                                        static_cast<double>(generator->roofline->get_perf(oi))));
+        }
+
+
+
+        // --- Parse the Forward-Pass specific paramters here --- //
+        // Parse if any fwd-pass specific compute delay is supplied in input file.
+        Tick fp_compute_time;
+        inFile >> fp_compute_time;
+
+        // Communication collective type and size.
+        std::string fp_comm_type_s;
+        inFile >> fp_comm_type_s;
+        uint64_t fp_comm_size;
+        inFile >> fp_comm_size;
+
+
+        // --- Parse the input-gradient pass parameters here --- //
+        // parse if any ig specific compute time is supplied in input file.
+        Tick ig_compute_time;
+        inFile >> ig_compute_time;
+
+        // parse ig communication type and size
+        std::string ig_comm_type_s;
+        inFile >> ig_comm_type_s;
+        uint64_t ig_comm_size;
+        inFile >> ig_comm_size;
+
+
+        // ---  arse the weight-gradient pass specific paramters here  --- //
+        // parse if any wg specific compute time is supplied in input file.
+        Tick wg_compute_time;
+        inFile >> wg_compute_time;
+
+        // parse wg communication type and size
+        std::string wg_comm_type_s;
+        inFile >> wg_comm_type_s;
+        uint64_t wg_comm_size;
+        inFile >> wg_comm_size;
+
+        // Parse the wg_update_time.
+        Tick wg_update_time;
+        inFile >> wg_update_time;
+
+
+        // -- Identify the dimensions & comtype involved in collective communications -- //
+        ParallelismPolicy specific_policy = ParallelismPolicy::None;
+        std::map<std::string, std::vector<bool>> selected_involved_dimensions;
+        ComType fp_type = ComType::None;
+        ComType ig_type = ComType::None;
+        ComType wg_type = ComType::None;
+
+        if (wg_comm_type_s == "ALLREDUCE") {
+            wg_type = ComType::All_Reduce;
+        } else if (wg_comm_type_s == "ALLTOALL") {
+            wg_type = ComType::All_to_All;
+        } else if (wg_comm_type_s == "ALLREDUCEALLTOALL") {
+            wg_type = ComType::All_Reduce_All_to_All;
+        } else if (wg_comm_type_s == "ALLGATHER") {
+            wg_type = ComType::All_Gatehr;
+        } else if (wg_comm_type_s == "REDUCESCATTER") {
+            wg_type = ComType::Reduce_Scatter;
+        }
+
+        if (ig_comm_type_s == "ALLREDUCE") {
+            ig_type = ComType::All_Reduce;
+        } else if (ig_comm_type_s == "ALLTOALL") {
+            ig_type = ComType::All_to_All;
+        } else if (ig_comm_type_s == "ALLREDUCEALLTOALL") {
+            ig_type = ComType::All_Reduce_All_to_All;
+        } else if (ig_comm_type_s == "ALLGATHER") {
+            ig_type = ComType::All_Gatehr;
+        } else if (ig_comm_type_s == "REDUCESCATTER") {
+            ig_type = ComType::Reduce_Scatter;
+        }
+
+        if (fp_comm_type_s == "ALLREDUCE") {
+            fp_type = ComType::All_Reduce;
+        } else if (fp_comm_type_s == "ALLTOALL") {
+            fp_type = ComType::All_to_All;
+        } else if (fp_comm_type_s == "ALLREDUCEALLTOALL") {
+            fp_type = ComType::All_Reduce_All_to_All;
+        } else if (fp_comm_type_s == "ALLGATHER") {
+            fp_type = ComType::All_Gatehr;
+        } else if (fp_comm_type_s == "REDUCESCATTER") {
+            fp_type = ComType::Reduce_Scatter;
+        }
+
+
+        // Idientify if any specific-parallel policy is being used //
+        if (parallelismPolicy == ParallelismPolicy::HybridCustomized) {
+            std::string specific_parallelsim;
+            inFile >> specific_parallelsim;
+            specific_policy = decode_parallelsim(specific_parallelsim);
+        }
+        if ((parallelismPolicy == ParallelismPolicy::DLRM ||
+             parallelismPolicy == ParallelismPolicy::DLRMEnhanced) &&
+            i == 0) {
+
+            specific_policy = ParallelismPolicy::All;
+        }
+        if (specific_policy != ParallelismPolicy::None) {
+            selected_involved_dimensions =
+              decode_involved_dimensions(specific_policy, model_parallel_npu_group);
+        } else {
+            selected_involved_dimensions = general_involved_dimensions;
+        }
+
+        // Create a Layer object and update the parsed values into it.
+        Layer* l; // Layer object.
+
+        if (!generator->roofline_enabled) {  // Roofline is NOT enabled
+            l = new Layer(
+                    id,
+                    i,
+                    generator,
+                    this,
+                    fp_compute_time * generator->compute_scale,
+                    fp_type,
+                    fp_comm_size * generator->comm_scale,
+                    selected_involved_dimensions["fwd"],
+                    ig_compute_time * generator->compute_scale,
+                    ig_type,
+                    ig_comm_size * generator->comm_scale,
+                    selected_involved_dimensions["ig"],
+                    wg_compute_time * generator->compute_scale,
+                    wg_type,
+                    wg_comm_size * generator->comm_scale,
+                    selected_involved_dimensions["wg"],
+                    wg_update_time,
+                    specific_policy);
+
+        } else { // Roofline is Enabled
+            l = new Layer(
+                    id,
+                    i,
+                    generator,
+                    this,
+                    (roofline_compute_time / 3.0) * generator->compute_scale,
+                    fp_type,
+                    fp_comm_size * generator->comm_scale,
+                    selected_involved_dimensions["fwd"],
+                    (roofline_compute_time / 3.0) * generator->compute_scale,
+                    ig_type,
+                    ig_comm_size * generator->comm_scale,
+                    selected_involved_dimensions["ig"],
+                    (roofline_compute_time / 3.0) * generator->compute_scale,
+                    wg_type,
+                    wg_comm_size * generator->comm_scale,
+                    selected_involved_dimensions["wg"],
+                    wg_update_time,
+                    specific_policy);
+
+        }
+
+        // Check if this layer is listed in either checkpoint creation or
+        // checkpoint intiation list. If yes, mark it in layer object.
+        if (chekpoints.find(i) != chekpoints.end()) {
+            l->is_checkpoint = true;
+        }
+        if (need_checkpoint_initiation.find(i) != need_checkpoint_initiation.end()) {
+            l->needs_fwd_in_bckwd_initiation = true;
+        }
+
+        // Enlist the layer object into the workload layers array.
+        layers[i] = l;
+    } // End of Layer parsing from input workload file.
+
+    // Print the information related to the workload.
+    if (generator->id == 0) {
+        std::cout << "type: " << type << " ,num passes: " << TOTAL_PASS
               << " ,lines: " << lines
               << " compute scale: " << generator->compute_scale
               << " ,comm scale: " << generator->comm_scale << std::endl;
-  }
-  inFile.close();
-  return true;
-}
+    }
+
+    //// --- Step-4. Close the input file handle. --- ////
+    inFile.close();
+
+    return true;
+} // End of Workload::initialize_workload function
+
+
 void Workload::fire() {
   call(EventType::General, NULL);
 }

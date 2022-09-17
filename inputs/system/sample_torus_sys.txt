@@ -8,10 +8,7 @@ all-gather-implementation: ring_ring_ring
 reduce-scatter-implementation: ring_ring_ring
 all-to-all-implementation: ring_ring_ring
 collective-optimization: localBWAware
-local-mem-roofline-bw: 100
-local-mem-roofline-neg-y-intercept: 0
-local-mem-roofline-peak-perf: 10000
-remote-mem-roofline-bw: 100
-remote-mem-roofline-neg-y-intercept: 0
-remote-mem-roofline-peak-perf: 10000
-data-type-size: 2
+enable-roofline: false
+roofline-bw-in-bytes-per-ns: 900
+roofline-neg-y-intercept: 0.0
+roofline-peak-perf-in-gigaflops: 125000
