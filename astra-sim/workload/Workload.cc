@@ -1234,8 +1234,9 @@ std::map<std::string, std::vector<bool>> Workload::decode_involved_dimensions(
   return result;
 }
 
-// This function reads the input workload file and initialize the layer
-// Find the checkpoints, layer details provided in the input file.
+// This function reads the input workload file and initialize the layer objects
+// Find the checkpoints, layer details provided in the input file and create
+// layer objects and insert them into layers[] array for this workload.
 bool Workload::initialize_workload(std::string name) {
 
     // Map to store layer indices with checkpoints and
