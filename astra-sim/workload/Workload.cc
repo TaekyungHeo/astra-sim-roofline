@@ -1293,10 +1293,6 @@ bool Workload::initialize_workload(std::string name) {
     std::string type; // Type of workload Parallelism
     inFile >> type;
 
-    int lines;        // Total number of layers in Workload
-    inFile >> lines;
-
-
     // Based on type of parallelism type, parse the remaining data.
     parallelismPolicy = decode_parallelsim(type);
 
@@ -1398,6 +1394,8 @@ bool Workload::initialize_workload(std::string name) {
     //// --- Step-3. Parse each Layer's information and create a Layer object --- ////
     // Store all the Layer objects for this workload into an array of
     // Layer objects.
+    int lines;        // Total number of layers in Workload
+    inFile >> lines;
     run_type = type; // Parallelism type
     SIZE = lines;    // Number of layers described in workload input file.
     layers = new Layer*[SIZE]; // workload array of layer objects.
@@ -1446,7 +1444,6 @@ bool Workload::initialize_workload(std::string name) {
                             fwd_pass_ops /
                             generator->roofline->get_perf(fwd_pass_oi));
         }
-
 
         // 4. Parse the Forward-Pass Compute-delay cycles, comm-pattern and comm-size (in Bytes) //
         Tick fwd_pass_compute_time;
@@ -1633,21 +1630,20 @@ bool Workload::initialize_workload(std::string name) {
                     i,
                     generator,
                     this,
-                    (roofline_fwd_pass_compute_time / 3.0) * generator->compute_scale,
+                    (roofline_fwd_pass_compute_time) * generator->compute_scale,
                     fwd_pass_comm_type,
                     fwd_pass_comm_size * generator->comm_scale,
                     selected_involved_dimensions["fwd"],
-                    (roofline_ig_pass_compute_time / 3.0) * generator->compute_scale,
+                    (roofline_ig_pass_compute_time) * generator->compute_scale,
                     ig_pass_comm_type,
                     ig_pass_comm_size * generator->comm_scale,
                     selected_involved_dimensions["ig"],
-                    (roofline_wg_pass_compute_time / 3.0) * generator->compute_scale,
+                    (roofline_wg_pass_compute_time) * generator->compute_scale,
                     wg_pass_comm_type,
                     wg_pass_comm_size * generator->comm_scale,
                     selected_involved_dimensions["wg"],
                     wg_update_time,
                     specific_policy);
-
         }
 
         // Check if this layer is listed in either checkpoint creation or
