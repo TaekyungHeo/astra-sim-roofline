@@ -25,27 +25,29 @@ LICENSE file in the root directory of this source tree.
 namespace AstraSim {
 class Sys;
 class SimSendCaller : public Callable {
- public:
-  void* buffer;
-  int count;
-  int type;
-  int dst;
-  int tag;
-  sim_request request;
-  void (*msg_handler)(void* fun_arg);
-  void* fun_arg;
-  void call(EventType type, CallData* data);
-  Sys* generator;
-  SimSendCaller(
-      Sys* generator,
-      void* buffer,
-      int count,
-      int type,
-      int dst,
-      int tag,
-      sim_request request,
-      void (*msg_handler)(void* fun_arg),
-      void* fun_arg);
+public:
+    void* buffer;
+    int count;
+    int type;
+    int dst;
+    int tag;
+    sim_request request;
+
+    void (*msg_handler)(void* fun_arg);
+    void* fun_arg;
+    void call(EventType type, CallData* data);
+    Sys* generator;
+
+    SimSendCaller(
+            Sys* generator,
+            void* buffer,
+            int count,
+            int type,
+            int dst,
+            int tag,
+            sim_request request,
+            void (*msg_handler)(void* fun_arg),
+            void* fun_arg);
 };
 } // namespace AstraSim
 #endif

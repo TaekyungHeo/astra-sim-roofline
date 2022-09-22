@@ -292,6 +292,10 @@ Sys::Sys(
 
   this->initialized = true;
 }
+
+
+
+
 int Sys::break_dimension(int model_parallel_npu_group) {
   if (model_parallel_npu_group == 1) {
     return -1;
@@ -599,6 +603,9 @@ int Sys::front_end_sim_recv(
         delay, buffer, count, type, src, tag, request, msg_handler, fun_arg);
   }
 }
+
+
+
 Tick Sys::mem_read(uint64_t bytes) {
   if (MEM == nullptr) {
     return 10;
@@ -1181,60 +1188,67 @@ DataSet* Sys::generate_collective(
     std::vector<bool> dimensions_involved,
     ComType collective_type,
     SchedulingPolicy pref_scheduling) {
-  uint64_t chunk_size = determine_chunk_size(size, collective_type);
-  uint64_t recommended_chunk_size = chunk_size;
-  int streams = ceil(((double)size) / chunk_size);
-  int tmp;
-  DataSet* dataset = new DataSet(streams);
-  int pri = get_priority(pref_scheduling);
-  int count = 0;
-  if (id == 0 &&
+
+    uint64_t chunk_size = determine_chunk_size(size, collective_type);
+    uint64_t recommended_chunk_size = chunk_size;
+    int streams = ceil(((double)size) / chunk_size);
+    int tmp;
+    DataSet* dataset = new DataSet(streams);
+    int pri = get_priority(pref_scheduling);
+    int count = 0;
+
+    // For Node - zero with OfflineGreedy
+    if (id == 0 &&
       (inter_dimension_scheduling == InterDimensionScheduling::OfflineGreedy ||
        inter_dimension_scheduling ==
            InterDimensionScheduling::OfflineGreedyFlex)) {
-    if (last_scheduled_collective != Sys::boostedTick()) {
-      offline_greedy->reset_loads();
-      last_scheduled_collective = Sys::boostedTick();
-    }
-  }
-
-  while (size > 0) {
-    count++;
-
-    std::vector<int> dim_mapper(topology->get_num_of_dimensions());
-    std::iota(std::begin(dim_mapper), std::end(dim_mapper), 0);
-    if (collective_type == ComType::All_Gatehr) {
-      std::reverse(dim_mapper.begin(), dim_mapper.end());
+        if (last_scheduled_collective != Sys::boostedTick()) {
+            offline_greedy->reset_loads();
+            last_scheduled_collective = Sys::boostedTick();
+        }
     }
 
-    if (inter_dimension_scheduling == InterDimensionScheduling::RoundRobin) {
-      std::rotate(
-          dim_mapper.begin(),
-          dim_mapper.begin() + round_robin_inter_dimension_scheduler,
-          dim_mapper.end());
-      // std::rotate(dimensions_involved.begin(),dimensions_involved.begin()+round_robin_inter_dimension_scheduler,
-      // dimensions_involved.begin()+topology->get_num_of_dimensions());
-      round_robin_inter_dimension_scheduler++;
-      if (round_robin_inter_dimension_scheduler ==
-          topology->get_num_of_dimensions()) {
-        round_robin_inter_dimension_scheduler = 0;
-      }
-    } else if (
-        collective_type != ComType::All_to_All &&
-        (inter_dimension_scheduling ==
-             InterDimensionScheduling::OfflineGreedy ||
-         inter_dimension_scheduling ==
-             InterDimensionScheduling::OfflineGreedyFlex)) {
-      uint64_t prev_size = size;
-      dim_mapper = offline_greedy->get_chunk_scheduling(
-          stream_counter,
-          size,
-          recommended_chunk_size,
-          dimensions_involved,
-          inter_dimension_scheduling,
-          collective_type);
-      chunk_size = prev_size - size;
-    }
+    while (size > 0) {
+        count++;
+        std::vector<int> dim_mapper(topology->get_num_of_dimensions());
+        std::iota(std::begin(dim_mapper), std::end(dim_mapper), 0);
+
+        // ALL-GATHER
+        if (collective_type == ComType::All_Gatehr) {
+            std::reverse(dim_mapper.begin(), dim_mapper.end());
+        }
+
+        if (inter_dimension_scheduling == InterDimensionScheduling::RoundRobin) {
+            std::rotate(
+                    dim_mapper.begin(),
+                    dim_mapper.begin() + round_robin_inter_dimension_scheduler,
+                    dim_mapper.end() );
+
+            // std::rotate(dimensions_involved.begin(),dimensions_involved.begin()+round_robin_inter_dimension_scheduler,
+            // dimensions_involved.begin()+topology->get_num_of_dimensions());
+
+            round_robin_inter_dimension_scheduler++;
+            if (round_robin_inter_dimension_scheduler == topology->get_num_of_dimensions()) {
+                round_robin_inter_dimension_scheduler = 0;
+            }
+        }
+        else if (
+                collective_type != ComType::All_to_All &&
+                (inter_dimension_scheduling ==
+                InterDimensionScheduling::OfflineGreedy || inter_dimension_scheduling ==
+                InterDimensionScheduling::OfflineGreedyFlex)
+                ) {
+
+            uint64_t prev_size = size;
+            dim_mapper = offline_greedy->get_chunk_scheduling(
+                    stream_counter,
+                    size,
+                    recommended_chunk_size,
+                    dimensions_involved,
+                    inter_dimension_scheduling,
+                    collective_type);
+            chunk_size = prev_size - size;
+        }
 
     if (collective_type == ComType::All_to_All ||
         (inter_dimension_scheduling !=
@@ -1410,6 +1424,9 @@ DataSet* Sys::generate_collective(
   }
   return dataset;
 }
+
+
+
 void Sys::call_events() {
   for (auto& callable : event_queue[Sys::boostedTick()]) {
     try {
@@ -1777,19 +1794,22 @@ void Sys::handleEvent(void* arg) {
     // time: "<<Sys::boostedTick()<<std::endl;
     all_generators[id]->iterate();
     delete ehd;
-  } else if (event == EventType::RendezvousSend) {
+  }
+  else if (event == EventType::RendezvousSend) {
     // std::cout<<"rendevouz send handle event triggered at node: "<<id<<" for
     // call events! at time: "<<Sys::boostedTick()<<std::endl;
     RendezvousSendData* rsd = (RendezvousSendData*)ehd;
     rsd->send->call(EventType::General, nullptr);
     delete rsd;
-  } else if (event == EventType::RendezvousRecv) {
+  }
+  else if (event == EventType::RendezvousRecv) {
     // std::cout<<"rendevouz recv triggered at node: "<<id<<" for call events!
     // at time: "<<Sys::boostedTick()<<std::endl;
     RendezvousRecvData* rrd = (RendezvousRecvData*)ehd;
     rrd->recv->call(EventType::General, nullptr);
     delete rrd;
-  } else if (event == EventType::PacketReceived) {
+  }
+  else if (event == EventType::PacketReceived) {
     RecvPacketEventHadndlerData* rcehd = (RecvPacketEventHadndlerData*)ehd;
     // std::cout<<"****************************handle event triggered for
     // received packets! at node: "

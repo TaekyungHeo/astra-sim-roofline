@@ -567,37 +567,47 @@ LayerData Layer::report(
   }
   return layerData;
 }
+
+
+// Communication collective task for forward pass.
 void Layer::issue_forward_pass_comm(
-    SchedulingPolicy pref_scheduling,
-    CollectiveBarrier barrier) {
-  DataSet* fp = NULL;
-  fwd_barrier = barrier;
-  collective_counter++;
-  if (fwd_pass_comm_type == ComType::All_Reduce) {
-    fp = generator->generate_all_reduce(
-        fwd_pass_comm_size,
-        fwd_pass_comm_involved_dimensions,
-        pref_scheduling,
-        layer_num);
+        SchedulingPolicy pref_scheduling,
+        CollectiveBarrier barrier) {
+
+    // Identify the collective issued for the forward phase for this layer,
+    // and complete the corresponding collective.
+    DataSet* fp = NULL;
+    fwd_barrier = barrier;
+    collective_counter++;
+
+    if (fwd_pass_comm_type == ComType::All_Reduce) {
+        fp = generator->generate_all_reduce(
+                fwd_pass_comm_size,
+                fwd_pass_comm_involved_dimensions,
+                pref_scheduling,
+                layer_num);
+
     if (!fp->active) {
-      if (generator->id == 0) {
+        if (generator->id == 0) {
         std::cout
             << "info: all dims disabled, no forward pass collective for layer: "
             << id << std::endl;
       }
-      collective_counter--;
-      delete fp;
-      if (barrier == CollectiveBarrier::Blocking) {
+        collective_counter--;
+        delete fp;
+        if (barrier == CollectiveBarrier::Blocking) {
         workload->call(EventType::General, NULL);
       }
-      return;
+        return;
     }
+
     if (generator->id == 0) {
       std::cout << "info: all-reduce forward pass collective issued for layer: "
                 << id << ",";
       print_involved_dimensions(fwd_pass_comm_involved_dimensions);
     }
-  } else if (fwd_pass_comm_type == ComType::All_to_All) {
+  }
+  else if (fwd_pass_comm_type == ComType::All_to_All) {
     fp = generator->generate_all_to_all(
         fwd_pass_comm_size,
         fwd_pass_comm_involved_dimensions,
@@ -621,7 +631,8 @@ void Layer::issue_forward_pass_comm(
                 << id << ",";
       print_involved_dimensions(fwd_pass_comm_involved_dimensions);
     }
-  } else if (fwd_pass_comm_type == ComType::All_Gatehr) {
+  }
+  else if (fwd_pass_comm_type == ComType::All_Gatehr) {
     fp = generator->generate_all_gather(
         fwd_pass_comm_size,
         fwd_pass_comm_involved_dimensions,
@@ -645,7 +656,8 @@ void Layer::issue_forward_pass_comm(
                 << id << ",";
       print_involved_dimensions(fwd_pass_comm_involved_dimensions);
     }
-  } else if (fwd_pass_comm_type == ComType::Reduce_Scatter) {
+  }
+  else if (fwd_pass_comm_type == ComType::Reduce_Scatter) {
     fp = generator->generate_reduce_scatter(
         fwd_pass_comm_size,
         fwd_pass_comm_involved_dimensions,
@@ -670,7 +682,8 @@ void Layer::issue_forward_pass_comm(
           << id << ",";
       print_involved_dimensions(fwd_pass_comm_involved_dimensions);
     }
-  } else if (fwd_pass_comm_type == ComType::None) {
+  }
+  else if (fwd_pass_comm_type == ComType::None) {
     collective_counter--;
     if (generator->id == 0) {
       std::cout << "info: no forward pass collective for layer: " << id
@@ -680,12 +693,15 @@ void Layer::issue_forward_pass_comm(
       workload->call(EventType::General, NULL);
     }
     return;
-  } else {
+  }
+  else {
     Sys::sys_panic("no known collective operation! ");
   }
   fwd_pass_datasets[fp->my_id] = fp;
   fp->set_notifier(this, EventType::Fwd_Comm_Finished);
 }
+
+
 void Layer::issue_input_grad_comm(
     SchedulingPolicy pref_scheduling,
     CollectiveBarrier barrier) {

@@ -86,23 +86,31 @@ void Workload::call(EventType event, CallData* data) {
   }
   if (parallelismPolicy == ParallelismPolicy::Data) {
     iterate_data_parallel();
-  } else if (parallelismPolicy == ParallelismPolicy::Transformer) {
+  }
+  else if (parallelismPolicy == ParallelismPolicy::Transformer) {
     iterate_hybrid_parallel_Transformer();
-  } else if (
+  }
+  else if (
       parallelismPolicy == ParallelismPolicy::DLRM ||
       parallelismPolicy == ParallelismPolicy::DLRMEnhanced) {
     iterate_hybrid_parallel_DLRM();
-  } else if (parallelismPolicy == ParallelismPolicy::MicroBenchmark) {
+  }
+  else if (parallelismPolicy == ParallelismPolicy::MicroBenchmark) {
     iterate_micro_benchmark();
-  } else if (parallelismPolicy == ParallelismPolicy::Model) {
+  }
+  else if (parallelismPolicy == ParallelismPolicy::Model) {
     iterate_model_parallel();
-  } else if (parallelismPolicy == ParallelismPolicy::HybridDataModel) {
+  }
+  else if (parallelismPolicy == ParallelismPolicy::HybridDataModel) {
     iterate_hybrid_parallel_data_model();
-  } else if (parallelismPolicy == ParallelismPolicy::HybridModelData) {
+  }
+  else if (parallelismPolicy == ParallelismPolicy::HybridModelData) {
     iterate_hybrid_parallel_model_data();
-  } else if (parallelismPolicy == ParallelismPolicy::DistributedInference) {
+  }
+  else if (parallelismPolicy == ParallelismPolicy::DistributedInference) {
     iterate_distributed_inference();
-  } else if (parallelismPolicy == ParallelismPolicy::TransformerFwdInBckwd) {
+  }
+  else if (parallelismPolicy == ParallelismPolicy::TransformerFwdInBckwd) {
     iterate_hybrid_parallel_Transformer_fwd_in_bckwd();
   } else if (parallelismPolicy == ParallelismPolicy::HybridCustomized) {
     iterate_hybrid_parallel_customized();
@@ -173,6 +181,8 @@ void Workload::check_for_sim_end() {
   }
   return;
 }
+
+// Training Loops
 void Workload::iterate_micro_benchmark() {
   assert(index >= 0);
   assert(index < SIZE);
@@ -843,6 +853,7 @@ void Workload::iterate_hybrid_parallel_Transformer_fwd_in_bckwd() {
     std::cout << "Assertion `index < SIZE' failed." << std::endl;
   }
   check_for_sim_end();
+
   if (current_state == LoopState::Forward_Pass) {
     if (!layers[index]->is_weight_grad_comm_finished_blocking()) {
       return;
@@ -883,7 +894,8 @@ void Workload::iterate_hybrid_parallel_Transformer_fwd_in_bckwd() {
     }
     generator->register_event(this, EventType::General, NULL, 1);
     return;
-  } else if (current_state == LoopState::Weight_Gradient) {
+  }
+  else if (current_state == LoopState::Weight_Gradient) {
     if (delay_loaded == false) {
       counter = layers[index]->get_weight_grad_compute();
       delay_loaded = true;
@@ -924,7 +936,8 @@ void Workload::iterate_hybrid_parallel_Transformer_fwd_in_bckwd() {
     }
     generator->register_event(this, EventType::General, NULL, 1);
     return;
-  } else if (current_state == LoopState::Input_Gradient) {
+  }
+  else if (current_state == LoopState::Input_Gradient) {
     if (layers[index]->needs_fwd_in_bckwd_initiation && !checkpoint_initiated) {
       int tmp = index;
       while (!layers[index--]->is_checkpoint)
@@ -961,7 +974,8 @@ void Workload::iterate_hybrid_parallel_Transformer_fwd_in_bckwd() {
     current_state = LoopState::Weight_Gradient;
     generator->register_event(this, EventType::General, NULL, 1);
     return;
-  } else if (current_state == LoopState::Forward_In_BackPass) {
+  }
+  else if (current_state == LoopState::Forward_In_BackPass) {
     if (!layers[index]->is_weight_grad_comm_finished_blocking()) {
       return;
     }
@@ -1127,6 +1141,9 @@ void Workload::iterate_hybrid_parallel_DLRM() {
     generator->register_event(this, EventType::General, NULL, 1);
   }
 }
+
+
+
 int Workload::get_layer_numbers(std::string workload_input) {
   std::ifstream inFile;
   inFile.open("workload_inputs/" + workload_input);

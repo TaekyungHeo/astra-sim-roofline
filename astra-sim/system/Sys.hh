@@ -160,6 +160,7 @@ class Sys : public Callable {
   OfflineGreedy* offline_greedy;
   Tick last_scheduled_collective;
 
+  //  Parameters for roofline
   bool roofline_enabled;
   Roofline* roofline = nullptr;
   uint64_t data_type_size;
@@ -195,6 +196,7 @@ class Sys : public Callable {
   void exitSimLoop(std::string msg);
   bool seprate_log;
 
+  // Constructor for the Sys object.
   Sys(AstraNetworkAPI* NI,
       AstraMemoryAPI* MEM,
       int id,
@@ -283,8 +285,10 @@ class Sys : public Callable {
       void* fun_arg);
   Tick mem_read(uint64_t bytes);
   Tick mem_write(uint64_t bytes);
+
   static int get_layer_numbers(std::string workload_input);
   std::vector<std::string> split_string(std::string str, std::string sep);
+
   DataSet* generate_all_reduce(
       uint64_t size,
       std::vector<bool> involved_dimensions,
@@ -323,6 +327,7 @@ class Sys : public Callable {
       InjectionPolicy injection_policy,
       CollectiveImplementation* collective_implementation,
       bool boost_mode);
+
   void insert_stream(std::list<BaseStream*>* queue, BaseStream* baseStream);
   void proceed_to_next_vnet_baseline(StreamBaseline* stream);
   int determine_chunk_size(uint64_t size, ComType type);
