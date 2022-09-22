@@ -1434,7 +1434,10 @@ bool Workload::initialize_workload(std::string name) {
         inFile >> fwd_pass_mem_traffic;
 
         // Compute the operational Intensity of this layer.
-        double fwd_pass_oi = (fwd_pass_ops / fwd_pass_mem_traffic);
+        double fwd_pass_oi = 1e-30;
+        if(fwd_pass_mem_traffic != 0) { // assuming fwd_pass_ops are zero
+          fwd_pass_oi = (fwd_pass_ops / fwd_pass_mem_traffic);
+        }
 
         // Calculate the roofline compute time if roofline is enabled.
         Tick roofline_fwd_pass_compute_time;
@@ -1464,8 +1467,10 @@ bool Workload::initialize_workload(std::string name) {
         inFile >> ig_pass_mem_traffic;
 
         // Compute the operational Intensity of this layer.
-        double ig_pass_oi = (ig_pass_ops / ig_pass_mem_traffic);
-
+        double ig_pass_oi = 1e-30;
+        if(ig_pass_mem_traffic != 0) { // assuming ig_pass_ops are zero
+          ig_pass_oi = (ig_pass_ops / ig_pass_mem_traffic);
+        }
         // Calculate the roofline compute time if roofline is enabled.
         Tick roofline_ig_pass_compute_time;
         if (generator->roofline_enabled) {
@@ -1494,7 +1499,10 @@ bool Workload::initialize_workload(std::string name) {
         inFile >> wg_pass_mem_traffic;
 
         // Compute the operational Intensity of this layer.
-        double wg_pass_oi = (wg_pass_ops / wg_pass_mem_traffic);
+        double wg_pass_oi = 1e-30;
+        if(wg_pass_mem_traffic != 0){ // assuming wg_pass_ops are zero
+          wg_pass_oi = (wg_pass_ops / wg_pass_mem_traffic);
+        }
 
         // Calculate the roofline compute time if roofline is enabled.
         Tick roofline_wg_pass_compute_time;
