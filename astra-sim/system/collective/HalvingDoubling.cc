@@ -19,6 +19,7 @@ HalvingDoubling::HalvingDoubling(
     uint64_t data_size,
     bool boost_mode)
     : Algorithm(layer_num) {
+
   this->comType = type;
   this->id = id;
   this->logicalTopology = ring_topology;
@@ -33,12 +34,15 @@ HalvingDoubling::HalvingDoubling(
   this->toggle = false;
   this->name = Name::HalvingDoubling;
   this->enabled = true;
+
   if (boost_mode) {
     this->enabled = ring_topology->is_enabled();
   }
+
   if (ring_topology->dimension == RingTopology::Dimension::Local) {
     transmition = MemBus::Transmition::Fast;
-  } else {
+  }
+  else {
     transmition = MemBus::Transmition::Usual;
   }
   switch (type) {
@@ -160,8 +164,8 @@ void HalvingDoubling::process_stream_count() {
       stream->state != StreamState::Dead) {
     stream->changeState(StreamState::Zombie);
     if (id == 0) {
-      // std::cout<<"stream "<<stream_num<<" changed state to
-      // zombie"<<std::endl;
+      //std::cout<<"stream "<<stream_num<<" changed state to
+      //zombie"<<std::endl;
     }
   }
   if (id == 0) {

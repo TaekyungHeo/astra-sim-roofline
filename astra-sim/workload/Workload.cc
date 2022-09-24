@@ -1191,32 +1191,35 @@ std::map<std::string, std::vector<bool>> Workload::decode_involved_dimensions(
     int model_parallel_npu_group) {
 
     std::map<std::string, std::vector<bool>> result;
-  std::vector<bool> none{
+
+    std::vector<bool> none{
       false, false, false, false, false, false, false, false, false, false};
-  std::vector<bool> all{
+    std::vector<bool> all{
       true, true, true, true, true, true, true, true, true, true};
 
-  if (policy == ParallelismPolicy::All) {
-    result["fwd"] = all;
-    result["ig"] = all;
-    result["wg"] = all;
-  }
-  else if (
-      policy == ParallelismPolicy::Data || policy == ParallelismPolicy::DLRM ||
-      policy == ParallelismPolicy::DLRMEnhanced ||
-      policy == ParallelismPolicy::MicroBenchmark) {
-    result["fwd"] = none;
-    result["ig"] = none;
-    result["wg"] = all;
-  }
-  else if (
+
+    if (policy == ParallelismPolicy::All) {
+      result["fwd"] = all;
+      result["ig"] = all;
+      result["wg"] = all;
+    }
+    else if (
+        policy == ParallelismPolicy::Data || policy == ParallelismPolicy::DLRM ||
+        policy == ParallelismPolicy::DLRMEnhanced ||
+        policy == ParallelismPolicy::MicroBenchmark) {
+
+          result["fwd"] = none;
+          result["ig"] = none;
+          result["wg"] = all;
+    }
+    else if (
       policy == ParallelismPolicy::Model ||
       policy == ParallelismPolicy::DistributedInference) {
     result["fwd"] = all;
     result["ig"] = all;
     result["wg"] = none;
   }
-  else if (policy == ParallelismPolicy::HybridModelData) {
+    else if (policy == ParallelismPolicy::HybridModelData) {
     std::vector<bool> data{
         true, false, false, false, false, false, false, false, false, false};
     std::vector<bool> model{
@@ -1225,7 +1228,7 @@ std::map<std::string, std::vector<bool>> Workload::decode_involved_dimensions(
     result["ig"] = model;
     result["wg"] = data;
   }
-  else if (policy == ParallelismPolicy::HybridDataModel) {
+    else if (policy == ParallelismPolicy::HybridDataModel) {
     std::vector<bool> model{
         true, false, false, false, false, false, false, false, false, false};
     std::vector<bool> data{
@@ -1234,9 +1237,9 @@ std::map<std::string, std::vector<bool>> Workload::decode_involved_dimensions(
     result["ig"] = model;
     result["wg"] = data;
   }
-  else if (
-      policy == ParallelismPolicy::TransformerFwdInBckwd ||
-      policy == ParallelismPolicy::Transformer) {
+    else if (
+        policy == ParallelismPolicy::TransformerFwdInBckwd ||
+        policy == ParallelismPolicy::Transformer) {
 
       int model_parallel_boundary = generator->break_dimension(model_parallel_npu_group);
       std::vector<bool> model;
@@ -1458,6 +1461,10 @@ bool Workload::initialize_workload(std::string name) {
         uint64_t fwd_pass_comm_size;
         inFile >> fwd_pass_comm_size;
 
+        // Divya's Debug
+        //if(generator->id ==0){
+        //  std::cout<<"fwd_pass_comm_size: "<<fwd_pass_comm_size<<" "<<std::endl;
+        //}
 
         // 5. Parse ig_pass operations and ig_memory traffic (in Bytes) for this layer
         double ig_pass_ops;
