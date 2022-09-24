@@ -306,7 +306,8 @@ int Sys::break_dimension(int model_parallel_npu_group) {
     if (all_npus * physical_dims[dimension_to_break] <
         model_parallel_npu_group) {
       all_npus *= physical_dims[dimension_to_break];
-    } else if (
+    }
+    else if (
         all_npus * physical_dims[dimension_to_break] >
         model_parallel_npu_group) {
       for (auto lt : logical_topologies) {
@@ -1180,7 +1181,9 @@ CollectivePhase Sys::generate_collective_phase(
     exit(1);
   }
 }
+
 DataSet* Sys::generate_collective(
+    //uint64_t size,
     uint64_t size,
     int layer_num,
     LogicalTopology* topology,
@@ -1189,27 +1192,37 @@ DataSet* Sys::generate_collective(
     ComType collective_type,
     SchedulingPolicy pref_scheduling) {
 
+    // Description of what this function does go here.
+
+    // Identify the final chunk size of the collective
     uint64_t chunk_size = determine_chunk_size(size, collective_type);
     uint64_t recommended_chunk_size = chunk_size;
+
     int streams = ceil(((double)size) / chunk_size);
     int tmp;
+
     DataSet* dataset = new DataSet(streams);
     int pri = get_priority(pref_scheduling);
     int count = 0;
 
     // For Node - zero with OfflineGreedy
-    if (id == 0 &&
-      (inter_dimension_scheduling == InterDimensionScheduling::OfflineGreedy ||
-       inter_dimension_scheduling ==
-           InterDimensionScheduling::OfflineGreedyFlex)) {
-        if (last_scheduled_collective != Sys::boostedTick()) {
-            offline_greedy->reset_loads();
-            last_scheduled_collective = Sys::boostedTick();
-        }
+    if ( id == 0 &&
+         (inter_dimension_scheduling == InterDimensionScheduling::OfflineGreedy ||
+          inter_dimension_scheduling == InterDimensionScheduling::OfflineGreedyFlex)
+        ) {
+
+      if (last_scheduled_collective != Sys::boostedTick()) {
+        offline_greedy->reset_loads();
+        last_scheduled_collective = Sys::boostedTick();
+      }
     }
 
+    //uint64_t org_size = size; // Divya's fix
+    //while (size > 0 && size <= org_size);
     while (size > 0) {
-        count++;
+       // std::cout<<"Entered the while loop"<<std::endl; // Divya's Debug
+        count++; // increment the dataset stream count
+        chunk_size = std::min(chunk_size,size); // checking for underflow in corner cases
         std::vector<int> dim_mapper(topology->get_num_of_dimensions());
         std::iota(std::begin(dim_mapper), std::end(dim_mapper), 0);
 
@@ -1217,7 +1230,6 @@ DataSet* Sys::generate_collective(
         if (collective_type == ComType::All_Gatehr) {
             std::reverse(dim_mapper.begin(), dim_mapper.end());
         }
-
         if (inter_dimension_scheduling == InterDimensionScheduling::RoundRobin) {
             std::rotate(
                     dim_mapper.begin(),
@@ -1249,180 +1261,219 @@ DataSet* Sys::generate_collective(
                     collective_type);
             chunk_size = prev_size - size;
         }
+        if (collective_type == ComType::All_to_All || (inter_dimension_scheduling !=
+                 InterDimensionScheduling::OfflineGreedy && inter_dimension_scheduling !=
+                 InterDimensionScheduling::OfflineGreedyFlex)
+            ) {
+          // Divya's Debug
+          //std::cout<<"Entered the All_to_All phase"<<std::endl;
+          //std::cout<<" Collective: " << (int) collective_type <<
+          // " InterDimension: "<< (int) inter_dimension_scheduling<<std::endl;
 
-    if (collective_type == ComType::All_to_All ||
-        (inter_dimension_scheduling !=
-             InterDimensionScheduling::OfflineGreedy &&
-         inter_dimension_scheduling !=
-             InterDimensionScheduling::OfflineGreedyFlex)) {
-      size -= chunk_size;
-    }
-    tmp = chunk_size;
-    std::list<CollectivePhase> vect;
+          size -= chunk_size;
+        }
 
-    if (collective_type != ComType::All_Reduce ||
-        collectiveOptimization == CollectiveOptimization::Baseline) {
-      for (int dim = 0; dim < topology->get_num_of_dimensions(); dim++) {
-        if (topology->get_num_of_nodes_in_dimension(dim_mapper[dim]) == 1 ||
-            !dimensions_involved[dim_mapper[dim]]) {
-          continue;
+        tmp = chunk_size;
+        std::list<CollectivePhase> vect;
+        if (collective_type != ComType::All_Reduce ||
+            collectiveOptimization == CollectiveOptimization::Baseline) {
+          for (int dim = 0; dim < topology->get_num_of_dimensions(); dim++) {
+              if (topology->get_num_of_nodes_in_dimension(dim_mapper[dim]) == 1 ||
+                 !dimensions_involved[dim_mapper[dim]]) {
+                  continue;
+              }
+
+            std::pair<int, RingTopology::Direction> queue =
+                vLevels->get_next_queue_at_level(dim_mapper[dim]);
+
+            //std::cout<<"Dim: "<<dim<<" chunk_size: "<<tmp<<std::endl; // Divya's debug
+            CollectivePhase phase =
+                generate_collective_phase(collective_type,
+                                          layer_num,
+                                          topology->get_basic_topology_at_dimension(
+                                              dim_mapper[dim], collective_type),
+                                          tmp,
+                                          queue.first,
+                                          queue.second,
+                                          InjectionPolicy::Normal,
+                                          implementation_per_dimension[dim_mapper[dim]],
+                                          boost_mode);
+            vect.push_back(phase);
+            tmp = phase.final_data_size;
+          }
         }
-        std::pair<int, RingTopology::Direction> queue =
-            vLevels->get_next_queue_at_level(dim_mapper[dim]);
-        CollectivePhase phase = generate_collective_phase(
-            collective_type,
-            layer_num,
-            topology->get_basic_topology_at_dimension(
-                dim_mapper[dim], collective_type),
-            tmp,
-            queue.first,
-            queue.second,
-            InjectionPolicy::Normal,
-            implementation_per_dimension[dim_mapper[dim]],
-            boost_mode);
-        vect.push_back(phase);
-        tmp = phase.final_data_size;
-      }
-    } else if (
-        inter_dimension_scheduling == InterDimensionScheduling::OfflineGreedy ||
-        inter_dimension_scheduling ==
-            InterDimensionScheduling::OfflineGreedyFlex ||
-        inter_dimension_scheduling == InterDimensionScheduling::OnlineGreedy) {
-      int dim = 0;
-      for (dim = 0; dim < topology->get_num_of_dimensions(); dim++) {
-        if (topology->get_num_of_nodes_in_dimension(dim_mapper[dim]) == 1 ||
-            !dimensions_involved[dim_mapper[dim]]) {
-          continue;
+        else if (
+            inter_dimension_scheduling == InterDimensionScheduling::OfflineGreedy ||
+            inter_dimension_scheduling == InterDimensionScheduling::OfflineGreedyFlex ||
+            inter_dimension_scheduling == InterDimensionScheduling::OnlineGreedy) {
+          int dim = 0;
+          for (dim = 0; dim < topology->get_num_of_dimensions(); dim++) {
+            if (topology->get_num_of_nodes_in_dimension(dim_mapper[dim]) == 1 ||
+                !dimensions_involved[dim_mapper[dim]]) {
+              continue;
+            }
+
+            std::pair<int, RingTopology::Direction> queue =
+                vLevels->get_next_queue_at_level(dim_mapper[dim]);
+
+            CollectivePhase phase = generate_collective_phase(
+                ComType::Reduce_Scatter,
+                layer_num,
+                topology->get_basic_topology_at_dimension(
+                    dim_mapper[dim], ComType::Reduce_Scatter),
+                tmp,
+                queue.first,
+                queue.second,
+                InjectionPolicy::Normal,
+                implementation_per_dimension[dim_mapper[dim]],
+                boost_mode);
+
+            vect.push_back(phase);
+            tmp = phase.final_data_size;
+          }
+
+          dim--;
+          for (; dim >= 0; dim--) {
+            if (topology->get_num_of_nodes_in_dimension(dim_mapper[dim]) == 1 ||
+                !dimensions_involved[dim_mapper[dim]]) {
+              continue;
+            }
+
+            std::pair<int, RingTopology::Direction> queue =
+                vLevels->get_next_queue_at_level(dim_mapper[dim]);
+            CollectivePhase phase = generate_collective_phase(
+                ComType::All_Gatehr,
+                layer_num,
+                topology->get_basic_topology_at_dimension(
+                    dim_mapper[dim], ComType::All_Gatehr),
+                tmp,
+                queue.first,
+                queue.second,
+                InjectionPolicy::Normal,
+                implementation_per_dimension[dim_mapper[dim]],
+                boost_mode);
+
+            vect.push_back(phase);
+            tmp = phase.final_data_size;
+          }
         }
-        std::pair<int, RingTopology::Direction> queue =
-            vLevels->get_next_queue_at_level(dim_mapper[dim]);
-        CollectivePhase phase = generate_collective_phase(
-            ComType::Reduce_Scatter,
-            layer_num,
-            topology->get_basic_topology_at_dimension(
-                dim_mapper[dim], ComType::Reduce_Scatter),
-            tmp,
-            queue.first,
-            queue.second,
-            InjectionPolicy::Normal,
-            implementation_per_dimension[dim_mapper[dim]],
-            boost_mode);
-        vect.push_back(phase);
-        tmp = phase.final_data_size;
-      }
-      dim--;
-      for (; dim >= 0; dim--) {
-        if (topology->get_num_of_nodes_in_dimension(dim_mapper[dim]) == 1 ||
-            !dimensions_involved[dim_mapper[dim]]) {
-          continue;
+        else {
+
+          // std::cout<<"Entered else condition"<<std::endl; // Divya's Debug
+          int dim = 0;
+          int last_active_dim = 0;
+          for (dim = 0; dim < topology->get_num_of_dimensions(); dim++) {
+            //std::cout<<"total num of dimensions: "<<topology->get_num_of_dimensions()<<std::endl; // Divya's debug
+            if (topology->get_num_of_nodes_in_dimension(dim_mapper[dim]) != 1 &&
+                dimensions_involved[dim_mapper[dim]]) {
+              // std::cout<<"last_active_dim: "<<dim<<std::endl; // Divya's debug
+              last_active_dim = dim;
+            }
+          }
+
+          for (dim = 0; dim < last_active_dim; dim++) {
+              if (topology->get_num_of_nodes_in_dimension(dim_mapper[dim]) == 1 ||
+                !dimensions_involved[dim_mapper[dim]]) {
+                  continue;
+              }
+
+            std::pair<int, RingTopology::Direction> queue =
+                vLevels->get_next_queue_at_level(dim_mapper[dim]);
+
+            // std::cout<<"Generate Reduce_Scatter phase"<<std::endl; // Divya's Debug
+
+            CollectivePhase phase = generate_collective_phase(
+                ComType::Reduce_Scatter,
+                layer_num,
+                topology->get_basic_topology_at_dimension(
+                    dim_mapper[dim], ComType::Reduce_Scatter),
+                tmp,
+                queue.first,
+                queue.second,
+                InjectionPolicy::Normal,
+                implementation_per_dimension[dim_mapper[dim]],
+                boost_mode);
+            vect.push_back(phase);
+            tmp = phase.final_data_size;
+          }
+          while (dim > 0 &&
+                 (dimensions_involved[dim_mapper[dim]] == false ||
+                  topology->get_num_of_nodes_in_dimension(dim_mapper[dim]) == 1)) {
+            dim--;
+          }
+          if (dimensions_involved[dim_mapper[dim]] &&
+              topology->get_num_of_nodes_in_dimension(dim_mapper[dim]) > 1) {
+
+            std::pair<int, RingTopology::Direction> queue =
+                vLevels->get_next_queue_at_level(dim_mapper[dim]);
+
+            //std::cout<<"Generate All_Reduce phase"<<std::endl; // Divya's Debug
+            CollectivePhase phase = generate_collective_phase(
+                ComType::All_Reduce,
+                layer_num,
+                topology->get_basic_topology_at_dimension(
+                    dim_mapper[dim], ComType::All_Reduce),
+                tmp,
+                queue.first,
+                queue.second,
+                InjectionPolicy::Normal,
+                implementation_per_dimension[dim_mapper[dim]],
+                boost_mode);
+
+            vect.push_back(phase);
+            tmp = phase.final_data_size;
+          }
+
+          dim--;
+          for (; dim >= 0; dim--) {
+            if (topology->get_num_of_nodes_in_dimension(dim_mapper[dim]) == 1 ||
+                !dimensions_involved[dim_mapper[dim]]) {
+              continue;
+            }
+
+            std::pair<int, RingTopology::Direction> queue =
+                vLevels->get_next_queue_at_level(dim_mapper[dim]);
+
+
+            // std::cout<<"Generate All_Gather phase"<<std::endl; Divya's Debug
+            CollectivePhase phase = generate_collective_phase(
+                ComType::All_Gatehr,
+                layer_num,
+                topology->get_basic_topology_at_dimension(
+                    dim_mapper[dim], ComType::All_Gatehr),
+                tmp,
+                queue.first,
+                queue.second,
+                InjectionPolicy::Normal,
+                implementation_per_dimension[dim_mapper[dim]],
+                boost_mode);
+
+            vect.push_back(phase);
+            tmp = phase.final_data_size;
+          }
         }
-        std::pair<int, RingTopology::Direction> queue =
-            vLevels->get_next_queue_at_level(dim_mapper[dim]);
-        CollectivePhase phase = generate_collective_phase(
-            ComType::All_Gatehr,
-            layer_num,
-            topology->get_basic_topology_at_dimension(
-                dim_mapper[dim], ComType::All_Gatehr),
-            tmp,
-            queue.first,
-            queue.second,
-            InjectionPolicy::Normal,
-            implementation_per_dimension[dim_mapper[dim]],
-            boost_mode);
-        vect.push_back(phase);
-        tmp = phase.final_data_size;
-      }
-    } else {
-      int dim = 0;
-      int last_active_dim = 0;
-      for (dim = 0; dim < topology->get_num_of_dimensions(); dim++) {
-        if (topology->get_num_of_nodes_in_dimension(dim_mapper[dim]) != 1 &&
-            dimensions_involved[dim_mapper[dim]]) {
-          last_active_dim = dim;
+
+      //std::cout<<"phase vect.size: "<<vect.size()<<std::endl; // Divya's Debug
+      //std::cout<<"while condition size: "<<size<<std::endl; //Divya's Debug
+      if (vect.size() > 0) {
+          StreamBaseline* newStream =
+              new StreamBaseline(this, dataset, stream_counter++, vect, pri);
+          newStream->current_queue_id = -1;
+          insert_into_ready_list(newStream);
+        } else {
+          // std::cout<<"Entered the while break condition: "<<std::endl; // Divya's Debug
+          dataset->active = false;
+          break;
         }
-      }
-      for (dim = 0; dim < last_active_dim; dim++) {
-        if (topology->get_num_of_nodes_in_dimension(dim_mapper[dim]) == 1 ||
-            !dimensions_involved[dim_mapper[dim]]) {
-          continue;
-        }
-        std::pair<int, RingTopology::Direction> queue =
-            vLevels->get_next_queue_at_level(dim_mapper[dim]);
-        CollectivePhase phase = generate_collective_phase(
-            ComType::Reduce_Scatter,
-            layer_num,
-            topology->get_basic_topology_at_dimension(
-                dim_mapper[dim], ComType::Reduce_Scatter),
-            tmp,
-            queue.first,
-            queue.second,
-            InjectionPolicy::Normal,
-            implementation_per_dimension[dim_mapper[dim]],
-            boost_mode);
-        vect.push_back(phase);
-        tmp = phase.final_data_size;
-      }
-      while (dim > 0 &&
-             (dimensions_involved[dim_mapper[dim]] == false ||
-              topology->get_num_of_nodes_in_dimension(dim_mapper[dim]) == 1)) {
-        dim--;
-      }
-      if (dimensions_involved[dim_mapper[dim]] &&
-          topology->get_num_of_nodes_in_dimension(dim_mapper[dim]) > 1) {
-        std::pair<int, RingTopology::Direction> queue =
-            vLevels->get_next_queue_at_level(dim_mapper[dim]);
-        CollectivePhase phase = generate_collective_phase(
-            ComType::All_Reduce,
-            layer_num,
-            topology->get_basic_topology_at_dimension(
-                dim_mapper[dim], ComType::All_Reduce),
-            tmp,
-            queue.first,
-            queue.second,
-            InjectionPolicy::Normal,
-            implementation_per_dimension[dim_mapper[dim]],
-            boost_mode);
-        vect.push_back(phase);
-        tmp = phase.final_data_size;
-      }
-      dim--;
-      for (; dim >= 0; dim--) {
-        if (topology->get_num_of_nodes_in_dimension(dim_mapper[dim]) == 1 ||
-            !dimensions_involved[dim_mapper[dim]]) {
-          continue;
-        }
-        std::pair<int, RingTopology::Direction> queue =
-            vLevels->get_next_queue_at_level(dim_mapper[dim]);
-        CollectivePhase phase = generate_collective_phase(
-            ComType::All_Gatehr,
-            layer_num,
-            topology->get_basic_topology_at_dimension(
-                dim_mapper[dim], ComType::All_Gatehr),
-            tmp,
-            queue.first,
-            queue.second,
-            InjectionPolicy::Normal,
-            implementation_per_dimension[dim_mapper[dim]],
-            boost_mode);
-        vect.push_back(phase);
-        tmp = phase.final_data_size;
-      }
+
+    } // End of the while loop
+
+    // std::cout<<"Finished the while loop"<<std::endl; //Divya's Debug
+    if (dataset->active) {
+      streams_injected += count;
+      dataset->total_streams = count;
     }
-    if (vect.size() > 0) {
-      StreamBaseline* newStream =
-          new StreamBaseline(this, dataset, stream_counter++, vect, pri);
-      newStream->current_queue_id = -1;
-      insert_into_ready_list(newStream);
-    } else {
-      dataset->active = false;
-      break;
-    }
-  }
-  if (dataset->active) {
-    streams_injected += count;
-    dataset->total_streams = count;
-  }
-  return dataset;
+    return dataset;
 }
 
 
