@@ -1044,7 +1044,7 @@ std::vector<std::string> Sys::split_string(std::string str, std::string sep) {
   }
   return arr;
 }
-int Sys::determine_chunk_size(uint64_t size, ComType type) {
+uint64_t Sys::determine_chunk_size(uint64_t size, ComType type) {
   uint64_t chunk_size = size / preferred_dataset_splits;
   return chunk_size;
 }
@@ -1199,7 +1199,7 @@ DataSet* Sys::generate_collective(
     uint64_t recommended_chunk_size = chunk_size;
 
     int streams = ceil(((double)size) / chunk_size);
-    int tmp;
+    uint64_t tmp;
 
     DataSet* dataset = new DataSet(streams);
     int pri = get_priority(pref_scheduling);

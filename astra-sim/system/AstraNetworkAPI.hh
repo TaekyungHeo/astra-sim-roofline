@@ -20,7 +20,7 @@ enum time_type_e { SE, MS, US, NS, FS };
 
 struct timespec_t {
   time_type_e time_res;
-  double time_val;
+  long double time_val;
 };
 enum req_type_e { UINT8, BFLOAT16, FP32 };
 struct sim_request {
